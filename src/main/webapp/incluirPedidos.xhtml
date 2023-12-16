@@ -1,0 +1,306 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+>
+    <h:head>
+
+    </h:head>
+    <h:body>
+        <ui:composition template="/pedidos.xhtml">
+            <ui:define name="cabecalhoPedidos">                  
+                <script type="text/javascript">                    
+                    $(document).ready(function() {                    
+                        $("#li_incluir").addClass('active');
+                    });                                     
+                </script>
+            </ui:define>            
+            <ui:define name="corpoPedidos">
+                <div class="row">
+                    <div class="col-lg-7 content">  
+                        <h:form rendered="#{!pedidoMB.formAvaliacaoAtivo}">
+                        <div class="page-header text-primary content"><h5>Cardápio</h5></div>
+                        </h:form>
+                        <h:form id="formAvaliacao" rendered="#{pedidoMB.formAvaliacaoAtivo}">
+                            <div class="page-header text-primary content"><h5>Item</h5></div>
+                            <div class="row content" style="margin-left: 15px; margin-right: 20px;" >
+                                <div class="row">
+                                    <h:outputLabel value="Item: #{pedidoMB.itemCardapioAvaliacao.nome}" styleClass="control-label"/>
+                                    <h:outputLabel value="#{pedidoMB.itemCardapioAvaliacao.nota}" styleClass="pull-right control-label"/>
+                                    <h:outputText class="glyphicon glyphicon-star pull-right"
+                                                style="color: goldenrod; margin-right: 5px;"/>
+                                </div>
+                                <div class="row">
+                                    <h:outputLabel value="Descrição: #{pedidoMB.itemCardapioAvaliacao.descricao}" styleClass="control-label"/>                                    
+                                </div>
+                                <div class="row">
+                                    <h:outputLabel value="Valor: #{pedidoMB.itemCardapioAvaliacao.valorEmReais}" styleClass="control-label"/>
+                                </div>                                
+                            </div>
+                            <div class="page-header text-primary content"><h5>Avaliações</h5></div>
+                            <ui:repeat value="#{pedidoMB.listaAvaliacao}" var="avaliacao">                            
+                                <div class="row content" style="border-bottom-width: 1px; border-bottom-style: solid;
+                                     border-bottom-color: #737373;margin-bottom: 15px; margin-left: 15px; margin-right: 20px;">
+                                    <div class="row content">
+                                        <h:outputLabel value="#{avaliacao.cliente.login}" styleClass="control-label"/>
+                                        <h:outputLabel value="#{avaliacao.nota}" styleClass="pull-right control-label"/>
+                                        <h:outputText class="glyphicon glyphicon-star pull-right"
+                                                style="color: goldenrod; margin-right: 5px;"/>
+                                    </div>                                    
+                                    <div class="row">
+                                        <h:outputText value="#{avaliacao.dataHoraFormatada}" />
+                                    </div>
+                                    <div class="row" style="margin-left: 11px;">
+                                        <h:outputLabel value="#{avaliacao.comentario}" styleClass="control-label"/>
+                                    </div>
+                                </div>                                        
+                            </ui:repeat>
+                            <ul class="pagination">
+                                <ui:repeat value="#{pedidoMB.qtdPaginas}" var="pagina">
+                                    <li class="#{pedidoMB.retornarStatusPagina(pagina)}">
+                                        <h:commandLink value="#{pagina+1}">
+                                            <f:ajax event="click" render="formAvaliacao" 
+                                                    listener="#{pedidoMB.listarAvaliacoes(pagina)}"/>
+                                        </h:commandLink></li>
+                                </ui:repeat>
+                            </ul>
+                            <div class="row" style="margin-right: 15px;">
+                                <h:commandLink value="Fechar" styleClass="btn btn-default pull-right" action="#{pedidoMB.fecharAvaliacao()}"
+                                               style="margin-bottom: 30px;"/>
+                            </div>
+                        </h:form>
+                        <h:form id="formItem" rendered="#{pedidoMB.formItemAtivo}" styleClass="form-group">                                                                
+                            <div class="row content" style="background-color: #EEEEEE;border-radius: 8px; margin-bottom: 10px;
+                                 border-bottom: 1px solid #ccc;border-left: 1px solid #ccc; 
+                                 border-right: 1px solid #ccc; border-top: 1px solid #ccc;">
+                                <div class="content" style=" margin-left: 10px; margin-right: 10px;">
+                                <div class="text-primary content" style="border-bottom: 2px solid #ccc;"><h4>Inserir Item</h4></div>
+                                <div class="content" style="margin-top: 5px">
+                                    <h:outputLabel value="#{pedidoMB.itemPedido.item.nome}" styleClass="control-label" style="font-size: 16px;"/>
+                                    <h:outputLabel value="#{pedidoMB.itemPedido.item.valorEmReais}" styleClass="pull-right control-label"
+                                                   style="font-size: 16px;"/>
+                                </div>
+                                <div class="content">
+                                    <h:outputLabel value="Quantidade" for="qtd" styleClass="control-label"/>
+                                    <h:inputText id="qtd" value="#{pedidoMB.itemPedido.quantidade}" styleClass="form-inline col-lg-offset-1">
+                                        <f:ajax event="blur" render="valorTotalItemPed"/>
+                                    </h:inputText>
+                                </div>
+                                <div class="content">
+                                    <h:outputLabel value="Observação" for="obs" styleClass=""/>
+                                    <h:inputTextarea id="obs" value="#{pedidoMB.itemPedido.observacao}" styleClass="form-control"/>
+                                </div>                                
+                                <div class="content text-primary" style="margin-bottom: 8px;border-bottom: 2px solid #ccc;">
+                                    <h5>Itens Adicionais</h5></div>                                                                
+                                <div class="row content">
+                                    <div class="col-lg-7">
+                                        <h:selectOneMenu id="itensAdicionais" value="#{pedidoMB.codItemAdicionalSelecionado}" 
+                                                         styleClass="form-control">
+                                            <f:selectItem itemLabel="Selecione..." itemValue="-1"/>
+                                            <f:selectItems value="#{pedidoMB.itensAdItemSelecionado}"/>                                    
+                                        </h:selectOneMenu>
+                                    </div>
+                                    <div class="col-lg-5">
+                                        <h:commandLink class="btn btn-default">
+                                            <i class="glyphicon glyphicon-plus" style="color: #5059DC"/>
+                                            <f:ajax event="click" execute="@this itensAdicionais" render="tableItensAdicionais valorTotalItemPed" 
+                                                    listener="#{pedidoMB.incluirItemAdicional()}"/>
+                                        </h:commandLink>
+                                    </div>
+                                </div>
+                                <div class="content" style=" border-bottom: 1px solid #ccc;">
+                                    <h:dataTable id="tableItensAdicionais" value="#{pedidoMB.itemPedido.itensAdicionais}" 
+                                                 var="itemPedidoAdicional" styleClass="table table-striped table-hover">
+                                        <h:column>
+                                            <f:facet name="header">Nome</f:facet>
+                                            <h:outputText value="#{itemPedidoAdicional.itemAdicional.nome}"/>
+                                        </h:column>
+                                        <h:column>
+                                            <f:facet name="header">Valor</f:facet>
+                                            <h:outputText value="#{itemPedidoAdicional.itemAdicional.valorEmReais}"/>
+                                        </h:column>
+                                        <h:column>
+                                            <h:commandLink action="#{pedidoMB.removerItemPedidoAdicional(itemPedidoAdicional)}">
+                                                <i class="glyphicon glyphicon-remove" style="color: #c21d3b"/>
+                                            </h:commandLink>
+                                        </h:column>                                        
+                                    </h:dataTable>
+                                </div>
+                                <div class="content">
+                                    <h:outputLabel value="Valor Total:" for="valorTotalItemPed" styleClass="control-label" style="font-size: 16px;"/>
+                                    <h:outputLabel id="valorTotalItemPed" value="#{pedidoMB.itemPedido.valorTotalEmReais}" styleClass="pull-right control-label" 
+                                                   style="font-size: 16px;"/>
+                                </div>
+                                <div class="btn-toolbar" style="margin-left: 2px; margin-top: 10px; margin-bottom: 5px;">                            
+                                    <h:commandButton value="Adicionar" styleClass="btn btn-primary" action="#{pedidoMB.salvarItem()}"/>                            
+                                    <h:commandButton value="Cancelar" immediate="true" styleClass="btn btn-default" action="#{pedidoMB.cancelarItem()}"/>                           
+                                </div>
+                                </div>
+                            </div>
+                        </h:form>                                
+                        <div class="row" style="background-color: #c9e2b3; border-radius: 4px;">
+                            <h:form>
+                                <ui:repeat value="#{visualizarCardMB.grupos}" var="grupoN1">  
+                                    <h:outputLabel value="#{grupoN1.nome}" styleClass="text-primary text-uppercase"/>                    
+                                    <ui:repeat value="#{grupoN1.itens}" var="item">                            
+                                        <div class="row content" style="margin-left: 20px; background-color: #ebebeb; margin-top: 2px; 
+                                             margin-right: 10px; margin-bottom: 2px">
+                                            <div class="content col-lg-11">
+                                                <div class="content" style=" background-color: lightgray; border-radius: 2px;">
+                                                    <h:outputLabel value="#{item.nome}"/>
+                                                    <h:outputLabel value="#{item.valorEmReais}" styleClass="pull-right"/>
+                                                    <h:commandLink value="#{item.nota}" action="#{pedidoMB.visualizarAvaliacao(item)}"
+                                                                   styleClass="pull-right" style="color: black; font-weight: bold;
+                                                                   margin-right: 10px;"/>
+                                                    <h:outputText class="glyphicon glyphicon-star pull-right" 
+                                                                  rendered="#{item.permiteAvaliacao and item.nota == null}"
+                                                                  style="color: #555; margin-right: 5px;"/>
+                                                    <h:outputText class="glyphicon glyphicon-star pull-right" 
+                                                                  rendered="#{item.permiteAvaliacao and item.nota != null}"
+                                                                  style="color: goldenrod; margin-right: 5px;"/>
+                                                </div>
+                                                <div class="content">
+                                                    <h:outputLabel value="#{item.descricao}"/>                               
+                                                </div>
+                                            </div>
+                                            <div class="content pull-left" style="margin-top: 5px;">
+                                                <h:commandLink styleClass="btn" action="#{pedidoMB.inserirItem(item)}">
+                                                    <i class="glyphicon glyphicon-plus"/>
+                                                </h:commandLink>
+                                            </div>                                            
+                                        </div>                                        
+                                    </ui:repeat>                                        
+                                    <ui:repeat value="#{grupoN1.gruposFilhos}" var="grupoN2">
+                                        <div class="content" style="margin-left: 15px">
+                                            <h:outputLabel value="#{grupoN2.nome}" styleClass="text-primary"/>                    
+                                            <ui:repeat value="#{grupoN2.itens}" var="item">                            
+                                                <div class="row content" style="margin-left: 20px; background-color: #ebebeb; margin-top: 2px; 
+                                                    margin-right: 10px; margin-bottom: 2px">
+                                                   <div class="content col-lg-11">
+                                                       <div class="content" style=" background-color: lightgray; border-radius: 2px;">
+                                                           <h:outputLabel value="#{item.nome}"/>
+                                                           <h:outputLabel value="#{item.valorEmReais}" styleClass="pull-right"/>
+                                                           <h:commandLink value="#{item.nota}" action="#{pedidoMB.visualizarAvaliacao(item)}"
+                                                                   styleClass="pull-right" style="color: black; font-weight: bold;
+                                                                    margin-right: 10px;"/>
+                                                            <h:outputText class="glyphicon glyphicon-star pull-right" 
+                                                                          rendered="#{item.permiteAvaliacao and item.nota == null}"
+                                                                          style="color: #555; margin-right: 5px;"/>
+                                                            <h:outputText class="glyphicon glyphicon-star pull-right" 
+                                                                          rendered="#{item.permiteAvaliacao and item.nota != null}"
+                                                                          style="color: goldenrod; margin-right: 5px;"/>
+                                                       </div>
+                                                       <div class="content">
+                                                           <h:outputLabel value="#{item.descricao}"/>                               
+                                                       </div>
+                                                   </div>
+                                                   <div class="content pull-left" style="margin-top: 5px;">
+                                                       <h:commandLink styleClass="btn" action="#{pedidoMB.inserirItem(item)}">
+                                                           <i class="glyphicon glyphicon-plus"/>
+                                                       </h:commandLink>
+                                                   </div>                                            
+                                               </div>    
+                                            </ui:repeat>                                            
+                                            <ui:repeat value="#{grupoN2.gruposFilhos}" var="grupoN3">
+                                                <div class="content" style="margin-left: 10px">
+                                                    <h:outputLabel value="#{grupoN3.nome}" styleClass="text-primary"/>                    
+                                                    <ui:repeat value="#{grupoN3.itens}" var="item">                            
+                                                        <div class="row content" style="margin-left: 20px; background-color: #ebebeb; margin-top: 2px; 
+                                                            margin-right: 10px; margin-bottom: 2px">
+                                                           <div class="content col-lg-11">
+                                                               <div class="content" style=" background-color: lightgray; border-radius: 2px;">
+                                                                   <h:outputLabel value="#{item.nome}"/>
+                                                                   <h:outputLabel value="#{item.valorEmReais}" styleClass="pull-right"/>
+                                                                   <h:commandLink value="#{item.nota}" action="#{pedidoMB.visualizarAvaliacao(item)}"
+                                                                   styleClass="pull-right" style="color: black; font-weight: bold;
+                                                                                    margin-right: 10px;"/>
+                                                                     <h:outputText class="glyphicon glyphicon-star pull-right" 
+                                                                                   rendered="#{item.permiteAvaliacao and item.nota == null}"
+                                                                                   style="color: #555; margin-right: 5px;"/>
+                                                                     <h:outputText class="glyphicon glyphicon-star pull-right" 
+                                                                                   rendered="#{item.permiteAvaliacao and item.nota != null}"
+                                                                                   style="color: goldenrod; margin-right: 5px;"/>
+                                                               </div>
+                                                               <div class="content">
+                                                                   <h:outputLabel value="#{item.descricao}"/>                               
+                                                               </div>
+                                                           </div>
+                                                           <div class="content pull-left" style="margin-top: 5px;">
+                                                               <h:commandLink styleClass="btn" action="#{pedidoMB.inserirItem(item)}">
+                                                                   <i class="glyphicon glyphicon-plus"/>
+                                                               </h:commandLink>
+                                                           </div>                                            
+                                                       </div>    
+                                                    </ui:repeat>                    
+                                                </div>
+                                            </ui:repeat> 
+                                        </div>
+                                    </ui:repeat>
+                                </ui:repeat>
+                            </h:form>   
+                        </div>
+                    </div>
+                    <div class="col-lg-5 content">
+                        <div class="page-header text-primary content" style="margin-left: 10px;"><h5>Pedido</h5></div>                        
+                        <div class="content" style="margin-top: 20px; margin-left: 5px; border-bottom: 1px solid #ccc;
+                             border-left: 1px solid #ccc; border-right: 1px solid #ccc; border-top: 1px solid #ccc;">
+                            <div class="content" style="margin-left: 10px;margin-right: 10px; margin-top: 10px;margin-bottom: 10px;">
+                            <h:form>
+                                <div class="content">
+                                    <h:outputLabel value="Data/Hora: " class="control-label"/>
+                                    <h:outputText value="  #{pedidoMB.pedido.dataHoraFormatada}"/>
+                                </div>
+                                <div class="content" style="margin-top: 5px; margin-bottom: 5px">
+                                    <h:outputLabel value="Mesa" for="mesa" styleClass="control-label"/>
+                                    <h:inputText id="mesa" value="#{pedidoMB.pedido.mesa}" styleClass="form-inline col-lg-offset-1"/>                                    
+                                </div>
+                                <div class="content">
+                                    <h:outputLabel value="Observação" for="obsPedido" styleClass="control-label"/>
+                                    <h:inputTextarea id="obsPedido" value="#{pedidoMB.pedido.observacao}" styleClass="form-control"/>
+                                </div>      
+                                <div class="content text-primary"><h5>Itens</h5></div>                                
+                                <div class="content" style=" border-bottom: 1px solid #ccc;">
+                                    <h:dataTable value="#{pedidoMB.pedido.itens}" var="item" styleClass="table table-striped table-hover">
+                                        <h:column>
+                                            <f:facet name="header">Nome</f:facet>
+                                            <h:outputText value="#{item.item.nome}"/>
+                                        </h:column>
+                                        <h:column>
+                                            <f:facet name="header">Qtd.</f:facet>
+                                            <h:outputText value="#{item.quantidade}"/>
+                                        </h:column>
+                                        <h:column>
+                                            <f:facet name="header">Valor</f:facet>
+                                            <h:outputText value="#{item.valorTotalEmReais}"/>
+                                        </h:column>
+                                        <h:column>
+                                            <h:commandLink action="#{pedidoMB.removerItem(item)}">
+                                                <i class="glyphicon glyphicon-remove" style="color: #c21d3b"/>
+                                            </h:commandLink>
+                                        </h:column>                                        
+                                    </h:dataTable>
+                                </div>
+                                <div class="content">
+                                    <h:outputLabel value="Valor: " styleClass="control-label"/>
+                                    <h:outputLabel value="#{pedidoMB.pedido.valorEmReais}" styleClass="control-label pull-right"/>
+                                </div>
+                                <div class="content btn-toolbar" style="margin-left: 2px; margin-top: 10px;">                            
+                                    <h:commandButton value="Confirmar" styleClass="btn btn-success" action="#{pedidoMB.salvarPedido()}"/>                            
+                                    <h:commandButton value="Cancelar" immediate="true" styleClass="btn btn-default" action="#{pedidoMB.cancelarPedido()}"/>                           
+                                </div> 
+                            </h:form>
+                            </div>                                
+                        </div>
+                        <h:messages infoClass="alert-success" errorClass="alert-danger" layout="table" style="margin-top: 5px; margin-left: 5px"/>
+                    </div>                    
+                </div>                                    
+            </ui:define>
+        </ui:composition>
+        <f:metadata>            
+            <f:viewAction action="#{loginMB.verificaLogin('pedidos')}"/>            
+        </f:metadata>
+    </h:body>
+</html>
+

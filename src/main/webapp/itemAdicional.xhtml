@@ -1,0 +1,113 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>        
+    </h:head>
+    <h:body>
+        <ui:composition template="/cardapio.xhtml">
+            <ui:define name="cabecalhoCardapio">    
+                <h:outputScript library="js" name="jquery-3.1.1.js"/>                
+                <h:outputScript library="js" name="jquery.inputmask.bundle.js"/>
+                <script type="text/javascript">                    
+                    $(document).ready(function() {                    
+                        $("#li_item_adicional").addClass('active');
+                    });
+                    
+                    function createMasks(){
+                       $("#formItemAdicional\\:valor").inputmask({mask: "9{1,9},9{2}",
+                           placeholder: "0",
+                           numericInput: "0"
+                       });
+                    }
+                </script>
+            </ui:define>
+            <ui:define name="corpoCardapio">                
+                <div class="row" style="margin-top: 30px;margin-left: 8px">
+                <h:form class="row btn-group">                    
+                    <h:commandLink class="btn btn-default" action="#{itemAdicionalCardMB.inserir()}">
+                        <i class="glyphicon glyphicon-plus"/> Inserir
+                    </h:commandLink>
+                </h:form>
+                </div>
+                <div class="row">                    
+                    <h:form id="formItemAdicional" rendered="#{itemAdicionalCardMB.formAtivo}">
+                        <div class="page-header text-primary"><h5><h:outputText value="#{itemAdicionalCardMB.operacao}"/></h5></div>
+                        <div class="row">
+                            <div class="col-lg-4">
+                                <h:outputLabel value="Nome" for="nome" styleClass="control-label"/>
+                                <h:inputText id="nome" value="#{itemAdicionalCardMB.itemAdicional.nome}" styleClass="form-control" 
+                                             required="true"
+                                             requiredMessage="O campo Nome é obrigatório."/>
+                            </div>
+                            <div class="col-lg-4">
+                                <h:outputLabel value="Valor" for="valor" styleClass="control-label"/>
+                                <h:inputText id="valor" value="#{itemAdicionalCardMB.itemAdicional.valor}" styleClass="form-control" 
+                                             required="true"
+                                             requiredMessage="O campo Valor é obrigatório."
+                                             converter="valorConverter" style="text-align: right;"/>
+                            </div>                        
+                            <div class="col-lg-4">
+                                <h:outputLabel value="Situação" for="situacao" styleClass="control-label">
+                                    <script type="text/javascript">createMasks();</script>
+                                </h:outputLabel>
+                                <h:selectOneMenu id="situacao" value="#{itemAdicionalCardMB.itemAdicional.situacao}" styleClass="form-control" >
+                                    <f:selectItems value="#{itemAdicionalCardMB.situacaoItemAdicional}"/>
+                                </h:selectOneMenu>                                                            
+                            </div>  
+                        </div>
+                        <br></br>
+                        <div class="row btn-toolbar" style="margin-left: 3px">                            
+                            <h:commandButton value="Salvar" styleClass="btn btn-primary" action="#{itemAdicionalCardMB.salvar()}"/>                            
+                            <h:commandButton value="Fechar" immediate="true" styleClass="btn btn-default" action="#{itemAdicionalCardMB.cancelar()}"/>                           
+                        </div>                                               
+                    </h:form>
+                    <div class="row">
+                        <h:messages infoClass="alert-success" errorClass="alert-danger" layout="table" style="margin-top: 15px; margin-left: 15px"/>
+                    </div> 
+                </div>
+                <div class="row">
+                    <div class="page-header text-primary"><h5>Lista de Itens Adicionais</h5></div>
+                    <h:form id="listaItensAdicionais">
+                        <h:dataTable value="#{itemAdicionalCardMB.listaItemAdicional}" var="itemAdicional" styleClass="table table-striped table-hover">
+                        <h:column>
+                            <f:facet name="header">Item</f:facet>
+                            <h:outputText value="#{itemAdicional.nome}"/>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">Valor</f:facet>
+                            <h:outputText value="#{itemAdicional.valorEmReais}"/>
+                        </h:column>                        
+                        <h:column>
+                            <f:facet name="header">Situação</f:facet>
+                            <h:outputText value="#{itemAdicional.situacao.descricao}"/>
+                        </h:column>
+                        <h:column class="col-lg-1">        
+                            <f:facet name="header">Editar</f:facet>
+                            <h:commandLink class="btn btn-link" action="#{itemAdicionalCardMB.editar(itemAdicional)}">
+                                <i class="glyphicon glyphicon-edit"/></h:commandLink>
+                        </h:column>
+                    </h:dataTable> 
+                    <ul class="pagination">
+                        <ui:repeat value="#{itemAdicionalCardMB.qtdPaginas}" var="pagina">
+                            <li class="#{itemAdicionalCardMB.retornarStatusPagina(pagina)}">
+                                <h:commandLink value="#{pagina+1}">
+                                    <f:ajax event="click" render="listaItensAdicionais" 
+                                                                listener="#{itemAdicionalCardMB
+                                                                            .listarItensAdicionais(pagina)}"/>
+                                </h:commandLink>
+                            </li>
+                        </ui:repeat>
+                    </ul>
+                    </h:form>
+                </div>
+            </ui:define> 
+        </ui:composition>
+        <f:metadata>            
+            <f:viewAction action="#{loginMB.verificaLogin('cardapio')}"/>            
+        </f:metadata>
+    </h:body>
+</html>
+

@@ -1,0 +1,159 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+    </h:head>
+    <h:body>
+        <ui:composition template="/preparo.xhtml">
+            <ui:define name="cabecalhoPreparo">
+                <h:outputScript library="js" name="maskedinput.js"/>
+                <script type="text/javascript">                    
+                    $(document).ready(function() {                    
+                        $("#li_consultar").addClass('active');
+                        $("#periodoDe").mask("99/99/9999");                       
+                        $("#periodoAte").mask("99/99/9999");
+                    });                    
+                </script>
+            </ui:define>            
+            <ui:define name="corpoPreparo">
+                <div class="row">
+                    <h:form id="formPrepararItem" rendered="#{itensProntosMB.formItemAtivo}">
+                        <div class="content" style="margin-top: 20px; margin-bottom: 20px;border: 1px solid #ccc;">
+                            <div class="content" style="margin: 10px;">
+                                <div class="text-primary"><h5>Item</h5></div>
+                                <div class="row content">
+                                    <div class="col-md-4" style="margin-left: 0px;">
+                                        <h:outputLabel value="Pedido: " class="control-label"/>
+                                        <h:outputText value=" #{itensProntosMB.itemPedido.pedido.codigo}"/>    
+                                    </div>
+                                    <div class="col-md-4 ">
+                                        <h:outputLabel value="Data/Hora: " class="control-label"/>
+                                        <h:outputText value=" #{itensProntosMB.itemPedido.pedido.dataHoraFormatada}"/>      
+                                    </div>                                    
+                                </div>
+                                <div style="margin-bottom: 20px;">
+                                    <h:outputLabel value="Observação Pedido:" for="observacaoPedido" class="control-label"/>
+                                    <h:inputTextarea id="observacaoPedido" value="#{itensProntosMB.itemPedido.pedido.observacao}" disabled="true" class="form-control"/>
+                                </div>                        
+                                <div class="row content">
+                                    <div class="col-md-4">
+                                        <h:outputLabel value="Item: " class="control-label"/>
+                                        <h:outputText value=" #{itensProntosMB.itemPedido.item.nome}"/>                                        
+                                    </div>
+                                    <div class="col-md-4"> 
+                                        <h:outputLabel value="Quantidade: " class="control-label"/>
+                                        <h:outputText value=" #{itensProntosMB.itemPedido.quantidade}"/>                                        
+                                    </div>
+                                    <div class="col-md-4">
+                                        <h:outputLabel value="Situação: " class="control-label"/>
+                                        <h:outputText value=" #{itensProntosMB.itemPedido.situacao.descricao}"/>                                        
+                                    </div>
+                                </div>                                
+                                <div>
+                                    <h:outputLabel value="Itens Adidionais: " class="control-label"/>
+                                    <h:outputText value=" #{itensProntosMB.itemPedido.resumoItensAdicionais}"/>                                        
+                                </div>
+                                <div style="margin-bottom: 20px;">
+                                    <h:outputLabel value="Observação Item:" for="observacaoItem" class="control-label"/>
+                                    <h:inputTextarea id="observacaoItem" value="#{itensProntosMB.itemPedido.observacao}" disabled="true" class="form-control"/>
+                                </div>
+                                <div class="row content">
+                                    <div class="col-md-4"> 
+                                        <h:outputLabel value="Tempo de Preparo: " class="control-label"/>
+                                        <h:outputText value=" #{itensProntosMB.itemPedido.tempoPreparo}"/>                                        
+                                    </div>
+                                    <div class="col-md-4">
+                                        <h:outputLabel value="Funcionário: " class="control-label"/>
+                                        <h:outputText value=" #{itensProntosMB.itemPedido.funcionario.login}"/>                                        
+                                    </div>                                    
+                                </div>
+                                <div style="margin-top: 10px;">
+                                    <h:commandLink value="Fechar" styleClass="btn btn-default" action="#{itensProntosMB.fecharForm()}"/>
+                                </div>
+                            </div>
+                        </div>
+                    </h:form>                    
+                    <h:messages infoClass="alert-success" errorClass="alert-danger" layout="table" style="margin-top: 20px; margin-left: 5px"/>
+                    <div class="page-header text-primary"><h5>Buscar Itens Prontos</h5></div>
+                    <h:form styleClass="form-inline" prependId="false" style="margin-left: 20px;">
+                        <div class="row" style="margin-top: 20px;">
+                            <div class="form-group">
+                                <h:outputLabel value="Período: de" for="periodoDe" styleClass="control-label" style="margin-left: 5px;"/>
+                                <h:inputText id="periodoDe" value="#{itensProntosMB.periodoDe}" styleClass="form-control" 
+                                             required="true" requiredMessage="O campo Período: De é obrigatório." style="margin-left: 3px;"
+                                             converter="dataConverter"/>
+                            </div>
+                            <div class=" form-group" style="margin-left: 3px;">
+                                <h:outputLabel value="até" for="periodoAte" styleClass="control-label" style="margin-left: 5px;"/>
+                                <h:inputText id="periodoAte" value="#{itensProntosMB.periodoAte}" styleClass="form-control " 
+                                             required="true" requiredMessage="O campo Período: Até é obrigatório." style="margin-left: 3px;"
+                                             converter="dataConverter"/>
+                            </div>
+                        </div>
+                        <div class="row" style="margin-top: 10px;">
+                            <div class="form-group">
+                                <h:outputLabel value="Cód. Pedido " for="codPedido" styleClass="control-label" style="margin-left: 5px;"/>
+                                <h:inputText id="codPedido" value="#{itensProntosMB.codPedido}" styleClass="form-control" style="margin-left: 3px;"/>
+                            </div>                                     
+                            <div class="form-group">
+                                <h:outputLabel value="Funcionário " for="funcionario" styleClass="control-label" style="margin-left: 5px;"/>
+                                <h:inputText id="funcionario" value="#{itensProntosMB.loginFuncionario}" styleClass="form-control" style="margin-left: 3px;"/>
+                            </div>
+                            <div class="form-group"> 
+                                <h:commandButton value="Buscar" action="#{itensProntosMB.buscarItens(0)}" 
+                                                 styleClass="btn btn btn-default" style="margin-left: 5px;"/>
+                            </div>
+                        </div>
+                    </h:form>
+                    <div style="margin-top: 15px;">
+                        <h:outputText value="#{itensProntosMB.msgRetornoBusca}" styleClass="alert-warning"/>
+                    </div>
+                    <div class="page-header text-primary"><h5>Lista de Itens Prontos</h5></div>
+                    <h:form  id="formListaItensProntos">
+                        <h:dataTable value="#{itensProntosMB.itensProntos}" var="item" styleClass="table table-striped table-hover">
+                            <h:column>
+                                <f:facet name="header">Cód. Pedido</f:facet>
+                                <h:outputText value="#{item.pedido.codigo}"/>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">Data/Hora</f:facet>
+                                <h:outputText value="#{item.pedido.dataHoraFormatada}"/>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">Item</f:facet>
+                                <h:outputText value="#{item.item.nome}"/>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">Funcionário</f:facet>
+                                <h:outputText value="#{item.funcionario.login}"/>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">Detalhes</f:facet>
+                                <h:commandLink class="btn btn-link" action="#{itensProntosMB.visualizarItem(item)}">
+                                    <i class="glyphicon glyphicon-open"/>
+                                </h:commandLink>
+                            </h:column>                                        
+                        </h:dataTable>
+                        <ul class="pagination">
+                            <ui:repeat value="#{itensProntosMB.qtdPaginas}" var="pagina">
+                                <li class="#{itensProntosMB.retornarStatusPagina(pagina)}">
+                                    <h:commandLink value="#{pagina+1}">
+                                        <f:ajax event="click" render="formListaItensProntos" 
+                                                listener="#{itensProntosMB.buscarItens(pagina)}"/>
+                                    </h:commandLink>
+                                </li>
+                            </ui:repeat>
+                        </ul>
+                    </h:form>
+                </div>
+            </ui:define>            
+        </ui:composition>
+        <f:metadata>            
+            <f:viewAction action="#{loginMB.verificaLogin('preparo')}"/>            
+        </f:metadata>
+    </h:body>
+</html>
+

@@ -1,0 +1,117 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title></title>
+    </h:head>
+    <h:body>
+        <ui:composition template="/cardapio.xhtml">
+            <ui:define name="cabecalhoCardapio">    
+                <h:outputScript library="js" name="jquery-3.1.1.js"/>                
+                <script type="text/javascript">                    
+                    $(document).ready(function() {                    
+                        $("#li_grupo").addClass('active');
+                    });                                     
+                </script>
+            </ui:define>
+            <ui:define name="corpoCardapio">                       
+                <div class="row" style="margin-top: 30px;margin-left: 8px">
+                <h:form class="row btn-group">                    
+                    <h:commandLink class="btn btn-default" action="#{grupoCardMB.inserir()}">
+                        <i class="glyphicon glyphicon-plus"/> Inserir
+                    </h:commandLink>
+                </h:form>
+                </div>
+                <div class="row">                    
+                    <h:form id="formGrupoCardapio" rendered="#{grupoCardMB.formAtivo}">
+                        <div class="page-header text-primary"><h5><h:outputText value="#{grupoCardMB.operacao}"/></h5></div>
+                        <div class="row">
+                            <div class="col-lg-3">
+                                <h:outputLabel value="Nome" for="nome" styleClass="control-label"/>
+                                <h:inputText id="nome" value="#{grupoCardMB.grupo.nome}" styleClass="form-control" 
+                                             required="true"
+                                             requiredMessage="O campo Nome é obrigatório."/>
+                            </div>
+                            <div class="col-lg-3">
+                                <h:outputLabel value="Nível" for="nivel" styleClass="control-label"/>
+                                <h:selectOneMenu id="nivel" value="#{grupoCardMB.grupo.nivel}" styleClass="form-control"
+                                                 required="true"
+                                                 requiredMessage="O campo Nível é obrigatório.">
+                                    <f:selectItem itemLabel="Selecione..." itemValue="#{null}"/>
+                                    <f:selectItems value="#{grupoCardMB.niveis}" />
+                                    <f:ajax execute="list" render="grupoPai" listener="#{grupoCardMB.carregarGruposPai(grupoCardMB.grupo.nivel)}"/>
+                                </h:selectOneMenu>  
+                            </div>
+                            <div class="col-lg-3">
+                                <h:outputLabel value="Grupo Pai" for="grupoPai" styleClass="control-label"/>
+                                <h:selectOneMenu id="grupoPai" value="#{grupoCardMB.grupo.grupoPai.codigo}" styleClass="form-control">
+                                    <f:selectItem itemLabel="Selecione..." itemValue="-1"/>
+                                    <f:selectItems value="#{grupoCardMB.gruposPai}" />                                    
+                                </h:selectOneMenu>  
+                            </div>
+                            <div class="col-lg-3">
+                                <h:outputLabel value="Situação" for="situacao" styleClass="control-label"/>
+                                <h:selectOneMenu id="situacao" value="#{grupoCardMB.grupo.situacao}" styleClass="form-control" >
+                                    <f:selectItems value="#{grupoCardMB.situacao}"/>
+                                </h:selectOneMenu>                                                            
+                            </div>
+                        </div>
+                        <br></br>
+                        <div class="row btn-toolbar" style="margin-left: 3px">                            
+                            <h:commandButton value="Salvar" styleClass="btn btn-primary" action="#{grupoCardMB.salvar()}"/>                            
+                            <h:commandButton value="Fechar" immediate="true" styleClass="btn btn-default" action="#{grupoCardMB.cancelar()}"/>                           
+                        </div>                        
+                    </h:form>
+                    <div class="row">
+                        <h:messages infoClass="alert-success" errorClass="alert-danger" layout="table" style="margin-top: 15px; margin-left: 15px"/>
+                    </div>                        
+                </div>
+                <div class="row">
+                    <div class="page-header text-primary"><h5>Lista de Grupos</h5></div>
+                    <h:form id="listaGrupos">
+                        <h:dataTable value="#{grupoCardMB.listaGrupo}" var="grupo" styleClass="table table-striped table-hover">
+                        <h:column>
+                            <f:facet name="header">Grupo</f:facet>
+                            <h:outputText value="#{grupo.nome}"/>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">Nível</f:facet>
+                            <h:outputText value="#{grupo.nivel.descricao}"/>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">Situação</f:facet>
+                            <h:outputText value="#{grupo.situacao.descricao}"/>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">Grupo Pai</f:facet>
+                            <h:outputText value="#{grupo.grupoPai.nome}"/>
+                        </h:column>                                                    
+                        <h:column class="col-lg-1">        
+                            <f:facet name="header">Editar</f:facet>
+                            <h:commandLink class="btn btn-link" action="#{grupoCardMB.editar(grupo)}">
+                                <i class="glyphicon glyphicon-edit"/></h:commandLink>
+                        </h:column>
+                    </h:dataTable>
+                    <ul class="pagination">
+                        <ui:repeat value="#{grupoCardMB.qtdPaginas}" var="pagina">
+                            <li class="#{grupoCardMB.retornarStatusPagina(pagina)}">
+                                <h:commandLink value="#{pagina+1}" >
+                                    <f:ajax event="click" render="listaGrupos" 
+                                                            listener="#{grupoCardMB.listarGrupos(pagina)}"/>
+                                </h:commandLink>
+                            </li>
+                        </ui:repeat>
+                    </ul>
+                    </h:form>
+                </div>
+            </ui:define> 
+        </ui:composition>
+        <f:metadata>            
+            <f:viewAction action="#{loginMB.verificaLogin('cardapio')}"/>            
+        </f:metadata>
+    </h:body>
+</html>
+

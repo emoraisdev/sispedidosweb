@@ -1,0 +1,44 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:pt="http://xmlns.jcp.org/jsf/passthrough">
+    <h:head>
+        <title>Sistema de Pedidos</title>
+        <meta charset="utf-8"/>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1"/>
+        <h:outputStylesheet library="bootstrap" name="css/bootstrap.min.css"></h:outputStylesheet>        
+    </h:head>
+    <h:body>
+        <div class="container" >
+            <div class="container-fluid">
+                <div class="navbar navbar-inverse">
+                    <div class="navbar-header">
+                        <a class="navbar-brand" href="#">Sistema de Pedidos</a> 
+                    </div>
+                </div>
+            </div>
+            <div class="row col-md-3 col-lg-offset-5" style="margin-top: 50px;">                
+                <div class="row">
+                    <div class="navbar-brand">LOGIN</div>
+                </div>
+                <div class="form-group">                    
+                    <h:form styleClass="form-horizontal ">             
+                        <h:panelGrid >
+                            <h:inputText id="login" styleClass="form-control col-md-12" pt:placeholder="Usuário"
+                                         value="#{loginMB.login}" required="true" requiredMessage="O campo Usuário é obrigatório"/>
+                            <br></br>
+                            <h:inputSecret id="senha" styleClass="form-control col-md-12" pt:placeholder="Senha"
+                                           value="#{loginMB.senha}" required="true" requiredMessage="O campo Senha é obrigatório"/>
+                            <br></br>
+                            <h:commandButton value="Entrar" styleClass="btn btn-default col-sm-5" action="#{loginMB.logar()}"/>
+                        </h:panelGrid>                
+                        <h:messages infoClass="alert-success" errorClass="alert-danger" layout="table" style="margin-top: 15px; margin-left: 15px"/>
+                    </h:form>
+                </div>
+            </div>                                        
+        </div>
+    </h:body>
+</html>
+

@@ -1,0 +1,215 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+    </h:head>
+    <h:body>
+        <ui:composition template="/pedidos.xhtml">
+            <ui:define name="cabecalhoPedidos">
+                <h:outputScript library="js" name="jquery-3.1.1.js"/>
+                <h:outputScript library="js" name="maskedinput.js"/>
+                <script type="text/javascript">                    
+                    $(document).ready(function() {                    
+                        $("#li_consultar").addClass('active');
+                        $("#periodoDe").mask("99/99/9999");                       
+                        $("#periodoAte").mask("99/99/9999");
+                    });                    
+                </script>
+            </ui:define>            
+            <ui:define name="corpoPedidos">
+                <div class="row">
+                    <h:form rendered="#{consultarPedidoMB.formPedidoAtivo}">
+                    <div class="content" style="margin-top: 20px;border-bottom: 1px solid #ccc;
+                                border-left: 1px solid #ccc; border-right: 1px solid #ccc; border-top: 1px solid #ccc;">
+                        <div class="content" style="margin: 10px;">
+                            <div class="text-primary"><h5>Pedido</h5></div>
+                            <div class="row">
+                                <div class="col-lg-2">
+                                    <h:outputLabel value="Código: " class="control-label"/>
+                                    <h:outputText value="  #{consultarPedidoMB.pedido.codigo}"/>
+                                </div>
+                                <div class="col-lg-3">
+                                    <h:outputLabel value="Data/Hora: " class="control-label"/>
+                                    <h:outputText value="  #{consultarPedidoMB.pedido.dataHoraFormatada}"/>
+                                </div>
+                                <div class="col-lg-2">
+                                    <h:outputLabel value="Mesa: " styleClass="control-label"/>
+                                    <h:outputText value="    #{consultarPedidoMB.pedido.mesa}"/>                                    
+                                </div>
+                                <div class="col-lg-3">
+                                    <h:outputLabel value="Situação: " styleClass="control-label"/>
+                                    <h:outputText value="    #{consultarPedidoMB.pedido.situacao.descricao}"/>                                    
+                                </div>
+                                <div class="col-lg-2">
+                                    <h:outputLabel value="Cliente: " styleClass="control-label"/>
+                                    <h:outputText value="    #{consultarPedidoMB.pedido.cliente.nome}"/>                                    
+                                </div>
+                            </div>    
+                            <div class="content">
+                                <h:outputLabel value="Observação: " for="obsPedido" styleClass="control-label"/>
+                                <h:inputTextarea id="obsPedido" value="#{consultarPedidoMB.pedido.observacao}" readonly="true" styleClass="form-control"/>
+                            </div>
+                            <div class="content text-primary"><h5>Itens</h5></div>                                
+                            <div class="content" style=" border-bottom: 1px solid #ccc;">
+                                <h:dataTable value="#{consultarPedidoMB.pedido.itens}" var="item" styleClass="table table-striped table-hover">
+                                    <h:column>
+                                        <f:facet name="header">Nome</f:facet>
+                                        <h:outputText value="#{item.item.nome}"/>
+                                    </h:column>
+                                    <h:column>
+                                        <f:facet name="header">Qtd.</f:facet>
+                                        <h:outputText value="#{item.quantidade}"/>
+                                    </h:column>
+                                    <h:column>
+                                        <f:facet name="header">Valor Total</f:facet>
+                                        <h:outputText value="#{item.valorTotalEmReais}"/>
+                                    </h:column>
+                                    <h:column>
+                                        <f:facet name="header">Itens Adicionais</f:facet>
+                                        <h:outputText value="#{item.resumoItensAdicionais}"/>
+                                    </h:column>
+                                    <h:column>
+                                        <f:facet name="header">Observação</f:facet>
+                                        <h:outputText value="#{item.observacao}"/>
+                                    </h:column>    
+                                    <h:column>
+                                        <f:facet name="header">Situação</f:facet>
+                                        <h:outputText value="#{item.situacao.descricao}"/>
+                                    </h:column> 
+                                    <h:column>
+                                        <h:commandLink value="Pronto" action="#{consultarPedidoMB.indicarItemComoPronto(item)}" class="btn btn-primary btn-sm" 
+                                                       rendered="#{item.permiteDefinirComoPronto}"/>
+                                    </h:column> 
+                                    <h:column>
+                                        <h:commandLink value="Solicitar Preparo" action="#{consultarPedidoMB.solicitarPreparo(item)}" class="btn btn-success btn-sm" 
+                                                       rendered="#{item.permiteSolicitarPreparo}"/>                                        
+                                    </h:column> 
+                                </h:dataTable>
+                            </div>
+                            <div class="content">
+                                <h:outputLabel value="Valor do Pedido: #{consultarPedidoMB.pedido.valorEmReais}" styleClass="control-label"/>
+                            </div>                            
+                            <div class="content btn-toolbar" style="margin-left: 2px; margin-top: 10px;">                            
+                                <h:commandLink value="Concluir Pedido" action="#{consultarPedidoMB.concluirPedido(null)}" 
+                                               rendered="#{!consultarPedidoMB.permiteAlteracao
+                                                           and consultarPedidoMB.conclusaoPedido}" 
+                                               styleClass="btn btn-success"/>                                                                        
+                                <h:commandLink value="Realizar Entrega" action="#{consultarPedidoMB.concluirPedido(1)}" 
+                                               rendered="#{!consultarPedidoMB.permiteAlteracao
+                                                           and consultarPedidoMB.conclusaoPedido 
+                                                           and consultarPedidoMB.notificacaoAtiva}" 
+                                               styleClass="btn btn-primary"/>
+                                <h:commandLink value="Solicitar Retirada" action="#{consultarPedidoMB.concluirPedido(2)}" 
+                                               rendered="#{!consultarPedidoMB.permiteAlteracao 
+                                                           and consultarPedidoMB.conclusaoPedido 
+                                                           and consultarPedidoMB.notificacaoAtiva}" 
+                                               styleClass="btn btn-primary"/>
+                                <h:commandLink value="Cancelar" rendered="#{!consultarPedidoMB.permiteAlteracao}" 
+                                               action="#{consultarPedidoMB.cancelarPedido()}" styleClass="btn btn-danger"/>                                        
+                                <h:commandLink value="Fechar" immediate="true" styleClass="btn btn-default pull-right" action="#{consultarPedidoMB.fecharPedido()}"/>                           
+                            </div> 
+
+                        </div>                                
+                    </div>
+                    </h:form>
+                    <h:messages infoClass="alert-success" errorClass="alert-danger" layout="table" style="margin-top: 20px; margin-left: 5px"/>
+                </div>
+                <div class="row">                    
+                    <div class="page-header text-primary"><h5>Buscar Pedidos</h5></div>
+                    <h:form styleClass="form-inline" prependId="false" style="margin-left: 20px;">
+                        <div class="row" style="margin-top: 20px;">
+                            <div class="form-group">
+                                <h:outputLabel value="Período: de" for="periodoDe" styleClass="control-label" style="margin-left: 5px;"/>
+                                <h:inputText id="periodoDe" value="#{consultarPedidoMB.periodoDe}" styleClass="form-control" 
+                                             required="true" requiredMessage="O campo Período: De é obrigatório." style="margin-left: 3px;"
+                                             converter="dataConverter"/>
+                            </div>
+                            <div class=" form-group" style="margin-left: 3px;">
+                                <h:outputLabel value="até" for="periodoAte" styleClass="control-label" style="margin-left: 5px;"/>
+                                <h:inputText id="periodoAte" value="#{consultarPedidoMB.periodoAte}" styleClass="form-control " 
+                                             required="true" requiredMessage="O campo Período: Até é obrigatório." style="margin-left: 3px;"
+                                             converter="dataConverter"/>
+                            </div>         
+                        </div>
+                        <div class="row" style="margin-top: 10px;">
+                            <div class="form-group">
+                                <h:outputLabel value="Cód. Pedido " for="codPedido" styleClass="control-label" style="margin-left: 5px;"/>
+                                <h:inputText id="codPedido" value="#{consultarPedidoMB.codPedido}" styleClass="form-control" style="margin-left: 3px;"/>
+                            </div>
+                            <div class="form-group">
+                                <h:outputLabel value="Mesa " for="mesa" styleClass="control-label" style="margin-left: 5px;"/>
+                                <h:inputText id="mesa" value="#{consultarPedidoMB.mesa}" styleClass="form-control" style="margin-left: 3px;"/>
+                            </div>         
+                            <div class="form-group">
+                                <h:outputLabel value="Situação" for="situacao" styleClass="control-label" style="margin-left: 5px;"/>
+                                <h:selectOneMenu id="situacao" value="#{consultarPedidoMB.situacaoPedido}" styleClass="form-control " style="margin-left: 3px;">
+                                    <f:selectItem itemLabel="Selecione..." itemValue="#{null}"/>
+                                    <f:selectItems value="#{consultarPedidoMB.situacoes}" />                                    
+                                </h:selectOneMenu>  
+                            </div>
+                            <div class="form-group"> 
+                                <h:commandButton value="Buscar" action="#{consultarPedidoMB.buscarPedidos(0)}" 
+                                                 styleClass="btn btn btn-default" style="margin-left: 5px;"/>
+                            </div>
+                        </div>
+                    </h:form>
+                    <div style="margin-top: 15px;">
+                        <h:outputText value="#{consultarPedidoMB.msgRetornoBusca}" styleClass="alert-warning"/>
+                    </div>
+                    <div class="page-header text-primary"><h5>Lista de Pedidos</h5></div>
+                    <h:form id="formListaPedidos">
+                        <h:dataTable value="#{consultarPedidoMB.pedidos}" var="pedido" styleClass="table table-striped table-hover">
+                            <h:column>
+                                <f:facet name="header">Código</f:facet>
+                                <h:outputText value="#{pedido.codigo}"/>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">Data/Hora</f:facet>
+                                <h:outputText value="#{pedido.dataHoraFormatada}"/>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">Mesa</f:facet>
+                                <h:outputText value="#{pedido.mesa}"/>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">Valor</f:facet>
+                                <h:outputText value="#{pedido.valorEmReais}"/>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">Situação</f:facet>
+                                <h:outputText value="#{pedido.situacao.descricao}"/>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">Situação Itens</f:facet>
+                                <h:outputText value="#{pedido.situacaoItens}"/>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">Detalhes</f:facet>
+                                <h:commandLink class="btn btn-link" action="#{consultarPedidoMB.visualizarPedido(pedido)}">
+                                    <i class="glyphicon glyphicon-open"/>
+                                </h:commandLink>
+                            </h:column>                                        
+                        </h:dataTable>                        
+                        <ul class="pagination">
+                            <ui:repeat value="#{consultarPedidoMB.qtdPaginas}" var="pagina">
+                                <li class="#{consultarPedidoMB.retornarStatusPagina(pagina)}">
+                                    <h:commandLink value="#{pagina+1}">
+                                        <f:ajax event="click" render="formListaPedidos" 
+                                                listener="#{consultarPedidoMB.buscarPedidos(pagina)}"/>
+                                    </h:commandLink>
+                                </li>
+                            </ui:repeat>
+                        </ul>
+                    </h:form>
+                </div>
+            </ui:define>            
+        </ui:composition>
+        <f:metadata>            
+            <f:viewAction action="#{loginMB.verificaLogin('pedidos')}"/>            
+        </f:metadata>
+    </h:body>
+</html>
+

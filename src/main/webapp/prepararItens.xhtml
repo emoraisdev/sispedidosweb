@@ -1,0 +1,199 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>        
+    </h:head>
+    <h:body>
+        <ui:composition template="/preparo.xhtml">
+            <ui:define name="cabecalhoPreparo">
+                <script type="text/javascript">                    
+                    var preparoIniciado = false;
+                    var intervalItensFila = null;
+                    var sTempoPreparo = "";
+                    var dInicioPreparo = null;
+                    var difDate = 0;
+                    $(document).ready(function() {                    
+                        $("#li_preparar").addClass('active');
+                        
+                        if ($("#formPrepararItem\\:inicioPreparoHidden").val() != null){
+                            $("#formPrepararItem\\:tempoPreparo").prop("disabled", true); 
+                            dInicioPreparo = new Date(parseInt($("#formPrepararItem\\:inicioPreparoHidden").val()));
+                            preparoIniciado = true;      
+                        }                        
+                    });                   
+                    
+                    function iniciarTimer(){
+                        sTempoPreparo = "";
+                        preparoIniciado = true;      
+                        dInicioPreparo = new Date();
+                        $("#formPrepararItem\\:tempoPreparo").prop("disabled", true); 
+                        $("#formPrepararItem\\:inicioPreparoHidden").val(dInicioPreparo.getTime());
+                    }
+                    
+                    function pararTimer(){
+                        preparoIniciado = false;                                      
+                        $("#formPrepararItem\\:terminoPreparoHidden").val((new Date()).getTime());
+                    }
+                                        
+                    setInterval(function(){        
+                        if (preparoIniciado) {                           
+                            
+                            difDate = Math.abs(dInicioPreparo.getTime() - (new Date()).getTime());
+                                                                        
+                            sTempoPreparo = retornarTimer(difDate / 1000);
+                            $("#formPrepararItem\\:tempoPreparo").val(sTempoPreparo); 
+                        }
+                    }, 1000);
+                     
+                    intervalItensFila = setInterval(function(){$("#formAtualizar\\:btnAtualizar").click();},10000);
+                     
+                    function retornarTimer(total_segundos){
+                        
+                        var horas = Math.floor(total_segundos / 3600);
+                        total_segundos = total_segundos % 3600;
+
+                        var minutos = Math.floor(total_segundos / 60);
+                        total_segundos = total_segundos % 60;
+
+                        var segundos = Math.floor(total_segundos);
+                        
+                        horas = formatarTempo(horas);
+                        minutos = formatarTempo(minutos);
+                        segundos = formatarTempo(segundos);
+                        
+                        var tempoAtual = horas + ":" + minutos + ":" + segundos;
+
+                        return tempoAtual;
+                    }
+                     
+                    function formatarTempo(num) {
+                        return ( num &lt; 10 ? "0" : "" ) + num;                       
+                    }
+                                        
+                </script>
+            </ui:define>            
+            <ui:define name="corpoPreparo">
+                <div class="row">
+                <div class="col-md-7">
+                    <div class="page-header text-primary"><h5>Preparar Item</h5></div>
+                    <h:form id="formPrepararItem" rendered="#{prepararItemMB.formAtivo}">
+                        <div class="row">
+                            <div class="col-lg-6" style="margin-left: 0px;">
+                                <h:outputLabel value="Pedido: " class="control-label"/>
+                                <h:outputText value=" #{prepararItemMB.itemSelecionado.pedido.codigo}"/>    
+                            </div>
+                            <div class="col-lg-6 pull-right">
+                                <h:outputLabel value="Data/Hora: " class="control-label"/>
+                                <h:outputText value=" #{prepararItemMB.itemSelecionado.pedido.dataHoraFormatada}"/>      
+                            </div>
+                        </div>
+                        <div class="row col-md-12" style="margin-bottom: 25px;">
+                            <h:outputLabel value="Observação Pedido:" for="observacaoPedido" class="control-label"/>
+                            <h:inputTextarea id="observacaoPedido" value="#{prepararItemMB.itemSelecionado.pedido.observacao}" disabled="true" class="form-control"/>
+                        </div>                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <h:outputLabel value="Item: " class="control-label"/>
+                                <h:outputText value=" #{prepararItemMB.itemSelecionado.item.nome}"/>                                        
+                            </div>
+                            <div class="col-md-6 pull-right"> 
+                                <h:outputLabel value="Quantidade: " class="control-label"/>
+                                <h:outputText value=" #{prepararItemMB.itemSelecionado.quantidade}"/>                                        
+                            </div>
+                        </div>
+                        <div class="row col-md-12">
+                            <h:outputLabel value="Itens Adidionais: " class="control-label"/>
+                            <h:outputText value=" #{prepararItemMB.itemSelecionado.resumoItensAdicionais}"/>                                        
+                        </div>
+                        <div class="row col-md-12">
+                            <h:outputLabel value="Situação: " class="control-label"/>
+                            <h:outputText value=" #{prepararItemMB.itemSelecionado.situacao.descricao}"/>                                        
+                        </div>
+                        <div class="row col-md-12" style="padding-bottom: 15px; margin-bottom: 10px;">
+                            <h:outputLabel value="Observação Item:" for="observacaoItem" class="control-label"/>
+                            <h:inputTextarea id="observacaoItem" value="#{prepararItemMB.itemSelecionado.observacao}" disabled="true" class="form-control"/>
+                        </div>
+                        <div class="row col-md-12" style="border-bottom: 1px solid #ccc; padding-bottom: 20px;">
+                            <h:commandLink value="Iniciar" styleClass="btn btn-primary" disabled="#{prepararItemMB.modoPreparoAtivo}">
+                                           <f:ajax event="click" onevent="iniciarTimer()" render="@form painelfilaItens mensagem"
+                                                   listener="#{prepararItemMB.iniciarPreparo()}"
+                                                   execute="inicioPreparoHidden"/>
+                            </h:commandLink>
+                            <h:commandLink value="Fechar" styleClass="btn btn-default" style="margin-left: 10px;"
+                                           action="#{prepararItemMB.fecharForm()}" disabled="#{prepararItemMB.modoPreparoAtivo}"/>
+                            <h:inputHidden id="inicioPreparoHidden" 
+                                           value="#{prepararItemMB.inicioPreparo}"/>
+                            <h:inputHidden id="terminoPreparoHidden" 
+                                           value="#{prepararItemMB.terminoPreparo}"/>
+                        </div>
+                        <h:panelGroup id="painelTimer" rendered="#{prepararItemMB.modoPreparoAtivo}" class="col-md-12">
+                            <div class="row col-md-12" style="margin-top: 25px; margin-bottom: 15px;">
+                                <h:outputLabel value="Tempo de Preparo: " for="tempoPreparo" class="control-label"/>
+                                <h:inputText id="tempoPreparo" styleClass="well well-sm" 
+                                             style="margin-left: 5px;width: 100px;" disabled="true"/>
+                            </div>
+                            <div class="row col-md-12">
+                                <h:commandButton value="Concluído" styleClass="btn btn-success" action="#{prepararItemMB.concluirPreparo()}"
+                                               onclick="pararTimer();"/>
+                                <h:commandLink value="Cancelar" styleClass="btn btn-default" style="margin-left: 5px;">
+                                        <f:ajax event="click" onevent="pararTimer()" render="@form painelfilaItens"
+                                                listener="#{prepararItemMB.cancelarPreparo()}"/>
+                                </h:commandLink>
+                            </div>                                                
+                        </h:panelGroup>
+                    </h:form>
+                    <h:messages id="mensagem" infoClass="alert-success" errorClass="alert-danger" layout="table" style="margin-top: 20px; margin-left: 5px"/>
+                </div> 
+                <div class="col-md-5 container">
+                    <div class="page-header text-primary"><h5>Fila de Itens</h5></div>
+                    <h:form id="formAtualizar" style="display: none">
+                        <h:commandLink value="Atualizar" id="btnAtualizar">
+                            <f:ajax event="click" render="painelfilaItens"
+                                    listener="#{prepararItemMB.buscarItensNaFila()}"/>
+                        </h:commandLink>
+                    </h:form>
+                    <h:panelGroup id="painelfilaItens">
+                    <div class="content" style="margin-top: 20px;border-bottom: 2px solid #ccc;
+                                border-left: 2px solid #ccc; border-right: 2px solid #ccc; border-top: 2px solid #ccc;
+                                overflow: auto; height: 500px;">                        
+                        <div style="margin: 15px;">
+                        <ui:repeat value="#{prepararItemMB.itensNaFila}" var="itemPedido">
+                            <div class="content" style="border-bottom: 1px solid #ccc; padding: 10px;">
+                                <h:form >
+                                    <div class="row">
+                                        <h:outputLabel value="Pedido: " class="control-label"/>
+                                        <h:outputText value=" #{itemPedido.pedido.codigo}"/>                                        
+                                    </div>
+                                    <div class="row">
+                                        <h:outputLabel value="Data/Hora: " class="control-label"/>
+                                        <h:outputText value=" #{itemPedido.pedido.dataHoraFormatada}"/>                                        
+                                    </div>
+                                    <div class="row">
+                                        <h:outputLabel value="Item: " class="control-label"/>
+                                        <h:outputText value=" #{itemPedido.item.nome}"/>                                        
+                                    </div>
+                                    <div class="row"> 
+                                        <h:outputLabel value="Quantidade: " class="control-label"/>
+                                        <h:outputText value=" #{itemPedido.quantidade}"/>                                        
+                                    </div>
+                                    <h:commandLink value="Visualizar" styleClass="btn btn-primary" action="#{prepararItemMB.visualizarItem(itemPedido)}" 
+                                                   disabled="#{prepararItemMB.modoPreparoAtivo}"/>
+                                </h:form>                                    
+                            </div>                                
+                        </ui:repeat>                                                                                  
+                        </div>
+                    </div>
+                    </h:panelGroup>
+                </div>
+                </div>
+            </ui:define>            
+        </ui:composition>
+        <f:metadata>            
+            <f:viewAction action="#{loginMB.verificaLogin('preparo')}"/>            
+        </f:metadata>
+    </h:body>
+</html>
+

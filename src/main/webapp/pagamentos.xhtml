@@ -1,0 +1,33 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+    </h:head>
+    <h:body>
+        <ui:composition template="/principal.xhtml">            
+            <ui:define name="cabecalho">
+                <h:outputScript library="js" name="jquery-3.1.1.js"/> 
+                <ui:insert name="cabecalhoPagamentos"></ui:insert>                
+            </ui:define>
+            <ui:define name="corpo">
+                <div class="page-header text-primary"><h4>Pagamentos</h4></div>
+                <div class="row">
+                    <ul class="nav nav-tabs">
+                        <li id="li_registrar" role="presentation" ><h:link value="Registrar Pagamentos" outcome="registrarPagamentos"/></li>
+                        <li id="li_consultar" role="presentation" ><h:link value="Consultar" outcome="consultarPagamentos"/></li>
+                    </ul>
+                </div>                    
+                <div class="col-lg-12">
+                    <ui:insert name="corpoPagamentos"></ui:insert>
+                </div>
+            </ui:define>
+        </ui:composition>
+        <f:metadata>            
+            <f:viewAction action="registrarPagamentos.xhtml"/>
+        </f:metadata>
+    </h:body>
+</html>
+

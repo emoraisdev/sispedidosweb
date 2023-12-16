@@ -1,0 +1,205 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+    </h:head>
+    <h:body>
+        <ui:composition template="/clientes.xhtml">
+            <ui:define name="cabecalhoClientes">
+                <script type="text/javascript">                    
+                    $(document).ready(function() {                    
+                        $("#li_clientes_registrados").addClass('active');
+                    });                    
+                </script>
+            </ui:define>            
+            <ui:define name="corpoClientes">
+                <div class="row" >                    
+                    <h:form  rendered="#{clienteRegistradoMB.dadosCliente}" styleClass="form-horizontal">                                                
+                        <div class="page-header text-primary"><h5>Dados do Cliente</h5></div>
+                        <div class="row">
+                            <div class="col-lg-3">
+                                <h:outputLabel value="Nome" for="nome" styleClass="control-label"/>
+                                <h:inputText id="nome" value="#{clienteRegistradoMB.entrada.cliente.nome}" styleClass="form-control" 
+                                             readonly="true"/>
+                            </div>
+                            <div class="col-lg-6">
+                                <h:outputLabel value="Sobrenome" for="sobrenome" styleClass="control-label"/>
+                                <h:inputText id="sobrenome" value="#{clienteRegistradoMB.entrada.cliente.sobrenome}" styleClass="form-control"
+                                             readonly="true"/>
+                            </div>
+                            <div class="col-lg-3" >
+                                <h:outputLabel value="CPF" for="cpf" styleClass="control-label"/>
+                                <h:inputText id="cpf" value="#{clienteRegistradoMB.entrada.cliente.cpfFormatado}" styleClass="form-control"
+                                             readonly="true"/>
+                            </div>                           
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-3" >
+                                <h:outputLabel value="Data de Nascimento" for="dataNascimento" styleClass="control-label"/>
+                                <h:inputText id="dataNascimento" value="#{clienteRegistradoMB.entrada.cliente.dataNascimentoFormatada}" styleClass="form-control"
+                                             readonly="true">
+                                </h:inputText>
+                            </div>
+                            <div class="col-lg-3">
+                                <h:outputLabel value="E-mail" for="email" styleClass="control-label"/>
+                                <h:inputText id="email" value="#{clienteRegistradoMB.entrada.cliente.email}" styleClass="form-control"
+                                             readonly="true"/>
+                            </div>
+                            <div class="col-lg-2">
+                                <h:outputLabel value="Telefone" for="telefone" styleClass="control-label"/>
+                                <h:inputText id="telefone" value="#{clienteRegistradoMB.entrada.cliente.telefoneFormatado}" styleClass="form-control"
+                                             readonly="true"/>
+                            </div>
+                            <div class="col-lg-2" >
+                                <h:outputLabel value="Login" for="login" styleClass="control-label"/>
+                                <h:inputText id="login" value="#{clienteRegistradoMB.entrada.cliente.login}" styleClass="form-control"
+                                             readonly="true"/>
+                            </div>
+                            <div class="col-lg-2" >
+                                <h:outputLabel value="Data Cadastro" for="dataCadastro" styleClass="control-label"/>
+                                <h:inputText id="dataCadastro" value="#{clienteRegistradoMB.entrada.cliente.dataCadastroFormatada}" styleClass="form-control"
+                                             readonly="true">
+                                </h:inputText>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-2" >
+                                <h:outputLabel value="Código Entrada" for="codigoEntrada" styleClass="control-label"/>
+                                <h:inputText id="codigoEntrada" value="#{clienteRegistradoMB.entrada.codigoEntrada.codigoEntrada}" styleClass="form-control"
+                                             readonly="true">
+                                </h:inputText>
+                            </div>
+                            <div class="col-lg-3">
+                                <h:outputLabel value="Data Entrada" for="dataEntrada" styleClass="control-label"/>
+                                <h:inputText id="dataEntrada" value="#{clienteRegistradoMB.entrada.dataEntradaFormatada}" styleClass="form-control"
+                                             readonly="true"/>
+                            </div>
+                            <div class="col-lg-3">
+                                <h:outputLabel value="Validade" for="validade" styleClass="control-label"/>
+                                <h:inputText id="validade" value="#{clienteRegistradoMB.entrada.dataSaidaFormatada}" styleClass="form-control"
+                                             readonly="true"/>
+                            </div>
+                        </div>
+                        <div class="page-header text-primary"><h5>Endereço</h5></div>                        
+                        <div class="row">
+                            <div class="col-lg-3" >
+                                <h:outputLabel value="Estado" for="estado" styleClass="control-label"/>
+                                <h:inputText id="estado" value="#{clienteRegistradoMB.entrada.cliente.endereco.estado}" styleClass="form-control"
+                                             readonly="true"/>
+                            </div>
+                            <div class="col-lg-6">
+                                <h:outputLabel value="Cidade" for="cidade" styleClass="control-label"/>
+                                <h:inputText id="cidade" value="#{clienteRegistradoMB.entrada.cliente.endereco.cidade}" styleClass="form-control"
+                                             readonly="true"/>
+                            </div>
+                            <div class="col-lg-3">
+                                <h:outputLabel value="Bairro" for="bairro" styleClass="control-label"/>
+                                <h:inputText id="bairro" value="#{clienteRegistradoMB.entrada.cliente.endereco.bairro}" styleClass="form-control"
+                                             readonly="true"/>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-4" >
+                                <h:outputLabel value="Rua" for="rua" styleClass="control-label"/>
+                                <h:inputText id="rua" value="#{clienteRegistradoMB.entrada.cliente.endereco.rua}" styleClass="form-control"
+                                             readonly="true"/>
+                            </div>
+                            <div class="col-lg-3" >
+                                <h:outputLabel value="Número" for="numero" styleClass="control-label"/>
+                                <h:inputText id="numero" value="#{clienteRegistradoMB.entrada.cliente.endereco.numero}" styleClass="form-control"
+                                             readonly="true"/>
+                            </div>
+                            <div class="col-lg-3" >
+                                <h:outputLabel value="Complemento" for="complemento" styleClass="control-label"/>
+                                <h:inputText id="complemento" value="#{clienteRegistradoMB.entrada.cliente.endereco.complemento}" styleClass="form-control"
+                                             readonly="true"/>
+                            </div>
+                            <div class="col-lg-2" >
+                                <h:outputLabel value="CEP" for="cep" styleClass="control-label"/>
+                                <h:inputText id="cep" value="#{clienteRegistradoMB.entrada.cliente.endereco.cepFormatado}" converter="cepConverter" styleClass="form-control"
+                                             readonly="true"/>
+                            </div>
+                        </div>
+                        <br></br>
+                        <div class="row" style="margin-left: 3px">
+                            <h:commandLink value="Fechar" styleClass="btn btn-default col-lg-1" action="#{clienteRegistradoMB.fecharDadosCliente()}"/>
+                        </div>
+                        <h:messages infoClass="alert-success" errorClass="alert-danger" layout="table" style="margin-top: 15px"/>
+                    </h:form>
+                </div>
+                <div class="row" style="padding: 0px;">                                                                                    
+                    <h:form rendered="#{!clienteRegistradoMB.dadosCliente}" styleClass="form-inline">
+                        <div class="page-header text-primary"><h5>Buscar Clientes</h5></div>
+                        <div class="row" style="margin-top: 20px;">
+                            <div class="form-group" style="margin-left: 20px;">
+                                <h:outputLabel value="Login" for="login" styleClass="control-label" style="margin-left: 10px;"/>
+                                <h:inputText id="login" value="#{clienteRegistradoMB.login}" styleClass="form-control" 
+                                             style="margin-left: 3px;"/>
+                            </div>
+
+                            <div class=" form-group" style="margin-left: 3px;">
+                                <h:outputLabel value="Nome" for="nome" styleClass="control-label" style="margin-left: 10px;"/>
+                                <h:inputText id="nome" value="#{clienteRegistradoMB.nome}" styleClass="form-control" 
+                                             style="margin-left: 3px;"/>
+                            </div>                                
+                            <div class="form-group"> 
+                                <h:commandButton value="Buscar" action="#{clienteRegistradoMB.buscarClientesRegistrados(0)}" 
+                                                 styleClass="btn btn-default" style="margin-left: 5px;"/>
+                            </div>
+                        </div>
+                    </h:form>
+                    <div style="margin-top: 15px;">
+                        <h:outputText value="#{clienteRegistradoMB.msgRetornoBusca}" styleClass="alert-warning"/>
+                    </div>
+                    <h:messages infoClass="alert-success" errorClass="alert-danger" layout="table" style="margin-top: 20px; margin-left: 5px"/>
+                </div>
+                <div class="row col-lg-12" style="padding: 0px;" >
+                    <h:form id="formListaClientesRegistrados" rendered="#{!clienteRegistradoMB.dadosCliente}">
+                        <div class="page-header text-primary"><h5>Lista de Clientes</h5></div>
+                        <h:dataTable value="#{clienteRegistradoMB.registrosEntrada}" var="entrada" styleClass="table table-striped table-hover">
+                            <h:column>
+                                <f:facet name="header">Login</f:facet>
+                                <h:outputText value="#{entrada.cliente.login}"/>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">Nome</f:facet>
+                                <h:outputText value="#{entrada.cliente.nome}"/>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">Data/Hora Entrada</f:facet>
+                                <h:outputText value="#{entrada.dataEntradaFormatada}"/>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">Código</f:facet>
+                                <h:outputText value="#{entrada.codigoEntrada.codigoEntrada}"/>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">Detalhes</f:facet>
+                                <h:commandLink class="btn btn-link" action="#{clienteRegistradoMB.visualizarCliente(entrada)}">
+                                    <i class="glyphicon glyphicon-open"/>
+                                </h:commandLink>
+                            </h:column>
+                        </h:dataTable>
+                        <ul class="pagination">
+                            <ui:repeat value="#{clienteRegistradoMB.qtdPaginas}" var="pagina">
+                                <li class="#{clienteRegistradoMB.retornarStatusPagina(pagina)}">
+                                    <h:commandLink value="#{pagina+1}">
+                                        <f:ajax event="click" render="formListaClientesRegistrados" 
+                                                listener="#{clienteRegistradoMB.buscarClientesRegistrados(pagina)}"/>
+                                    </h:commandLink>
+                                </li>
+                            </ui:repeat>
+                        </ul>
+                    </h:form>
+                </div>
+            </ui:define>
+        </ui:composition>
+        <f:metadata>            
+            <f:viewAction action="#{loginMB.verificaLogin('clientes')}"/>            
+        </f:metadata>
+    </h:body>
+</html>
+

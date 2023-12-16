@@ -1,0 +1,198 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+>
+    <h:head>
+    </h:head>
+    <h:body>
+        <ui:composition template="/cardapio.xhtml">
+            <ui:define name="cabecalhoCardapio">    
+                <h:outputScript library="js" name="jquery-3.1.1.js"/>
+                <h:outputScript library="js" name="jquery.inputmask.bundle.js"/>                
+                <script type="text/javascript">                    
+                    $(document).ready(function() {                    
+                        $("#li_itens").addClass('active');                  
+                    });                                     
+                    
+                    function createMasks(){
+                       $("#formItem\\:valor").inputmask({mask: "9{1,9},9{2}",
+                           placeholder: "0",
+                           numericInput: "0"
+                       });
+                    } 
+                </script>
+            </ui:define>
+            <ui:define name="corpoCardapio">                
+                <div class="row" style="margin-top: 30px;margin-left: 8px">
+                <h:form class="row btn-group">                    
+                    <h:commandLink class="btn btn-default" action="#{itemCardMB.inserir()}">
+                        <i class="glyphicon glyphicon-plus"/> Inserir
+                    </h:commandLink>
+                </h:form>
+                </div>
+                <div class="row">                    
+                    <h:form id="formItem" styleClass="form-horizontal" rendered="#{itemCardMB.formAtivo}">                       
+                        <div class="page-header text-primary"><h5><h:outputText value="#{itemCardMB.operacao}"/></h5></div>
+                        <div class="row">
+                            <div class="col-lg-3">
+                                <h:outputLabel value="Nome" for="nome" styleClass="control-label"/>
+                                <h:inputText id="nome" value="#{itemCardMB.item.nome}" styleClass="form-control" 
+                                             required="true" readonly="#{itemCardMB.modoVisualizar}"
+                                             requiredMessage="O campo Nome é obrigatório."/>
+                            </div>
+                            <div class="col-lg-3">
+                                <h:outputLabel value="Valor" for="valor" styleClass="control-label"/>
+                                <h:inputText id="valor" value="#{itemCardMB.item.valor}" styleClass="form-control" 
+                                             required="true" readonly="#{itemCardMB.modoVisualizar}"
+                                             requiredMessage="O campo Valor é obrigatório."
+                                             converter="valorConverter" style="text-align: right;"/>
+                            </div>                        
+                            <div class="col-lg-3">
+                                <h:outputLabel value="Grupo" for="grupo" styleClass="control-label">
+                                    <script type="text/javascript">createMasks();</script>
+                                </h:outputLabel>
+                                <h:selectOneMenu id="grupo" value="#{itemCardMB.item.grupo.codigo}" styleClass="form-control"
+                                                 required="true" requiredMessage="O campo Grupo é obrigatório."
+                                                 disabled="#{itemCardMB.modoVisualizar}">
+                                    <f:selectItem itemLabel="Selecione..." itemValue="#{null}"/>
+                                    <f:selectItems value="#{itemCardMB.grupos}" />                                    
+                                </h:selectOneMenu>  
+                            </div>                            
+                            <div class="col-lg-3">
+                                <h:outputLabel value="Situação" for="situacao" styleClass="control-label"/>
+                                <h:selectOneMenu id="situacao" value="#{itemCardMB.item.situacao}" styleClass="form-control"
+                                                 disabled="#{itemCardMB.modoVisualizar}">
+                                    <f:selectItems value="#{itemCardMB.situacaoItem}" />                                    
+                                </h:selectOneMenu>  
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-3">                               
+                                <h:outputLabel value="Descrição" for="descricao" styleClass="control-label"/>
+                                <h:inputTextarea id="descricao" value="#{itemCardMB.item.descricao}" styleClass="form-control" rows="4"
+                                                 readonly="#{itemCardMB.modoVisualizar}"/>
+                            </div>
+                            <div class="col-lg-2">
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <h:outputLabel value="Permite Preparo" for="permitePreparo" styleClass="control-label"/>
+                                        <h:selectOneMenu id="permitePreparo" value="#{itemCardMB.item.permitePreparo}" styleClass="form-control"
+                                                         disabled="#{itemCardMB.modoVisualizar}">
+                                            <f:selectItem itemValue="false" itemLabel="Não"/>
+                                            <f:selectItem itemValue="true" itemLabel="Sim"/>
+                                        </h:selectOneMenu>                                        
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-lg-12">
+                                        <h:outputLabel value="Permite Avaliação" for="permiteAvaliacao" styleClass="control-label"/>
+                                        <h:selectOneMenu id="permiteAvaliacao" value="#{itemCardMB.item.permiteAvaliacao}" styleClass="form-control"
+                                                         disabled="#{itemCardMB.modoVisualizar}">
+                                            <f:selectItem itemValue="false" itemLabel="Não"/>
+                                            <f:selectItem itemValue="true" itemLabel="Sim"/>
+                                        </h:selectOneMenu>  
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-3">
+                                <h:outputLabel value="Itens Adicionais Permitidos" for="itensAdicionaisItem" styleClass="control-label"/>
+                                <h:selectManyListbox id="itensAdicionaisItem" value="#{itemCardMB.codItensAdExcluir}" 
+                                                     class="form-control" size="5" disabled="#{itemCardMB.modoVisualizar}">
+                                    <f:selectItems value="#{itemCardMB.itensAdicionaisCadastrados}" />
+                                </h:selectManyListbox>
+                            </div>
+                            <div class="col-lg-1">
+                                <div class="row" style="margin-top: 35px;margin-left: 8px">
+                                    <h:commandLink class="btn btn-default" rendered="#{!itemCardMB.modoVisualizar}">
+                                        <i class="glyphicon glyphicon-chevron-left"/>
+                                        <f:ajax event="click" execute="@this itensAdicionais" render="itensAdicionaisItem" 
+                                                listener="#{itemCardMB.incluirItensAdicionais()}"/>
+                                    </h:commandLink>
+                                </div>
+                                <div class="row" style="margin-top: 2px;margin-left: 8px">
+                                    <h:commandLink class="btn btn-default" rendered="#{!itemCardMB.modoVisualizar}">
+                                        <i class="glyphicon glyphicon-chevron-right"/>
+                                        <f:ajax event="click" execute="@this itensAdicionaisItem" render="itensAdicionaisItem" 
+                                                listener="#{itemCardMB.excluirItensAdicionais()}"/>
+                                    </h:commandLink>
+                                </div>
+                                
+                            </div>
+                            <div class="col-lg-3">
+                                <h:outputLabel value="Incluir Itens Adicionais" for="itensAdicionais" styleClass="control-label"
+                                               rendered="#{!itemCardMB.modoVisualizar}"/>
+                                <h:selectManyListbox id="itensAdicionais" value="#{itemCardMB.codItensAdSelecionados}" 
+                                                     class="form-control" size="5" rendered="#{!itemCardMB.modoVisualizar}">
+                                    <f:selectItems value="#{itemCardMB.itensAdicionais}" />
+                                </h:selectManyListbox>                                
+                            </div>
+                        </div>
+                        <br></br>
+                        <div class="row btn-toolbar" style="margin-left: 3px">                            
+                            <h:commandButton value="Salvar" styleClass="btn btn-primary" action="#{itemCardMB.salvar()}" 
+                                             rendered="#{!itemCardMB.modoVisualizar}"/>                            
+                            <h:commandButton value="Fechar" immediate="true" styleClass="btn btn-default" action="#{itemCardMB.cancelar()}"/>                                                    
+                        </div>                                               
+                    </h:form>
+                    <div class="row">
+                        <h:messages infoClass="alert-success" errorClass="alert-danger" layout="table" style="margin-top: 15px; margin-left: 15px"/>
+                    </div> 
+                </div>
+                <div class="row">
+                    <div class="page-header text-primary"><h5>Lista de Itens</h5></div>
+                    <h:form id="listaItens">
+                        <h:dataTable value="#{itemCardMB.listaItem}" var="item" styleClass="table table-striped table-hover">
+                        <h:column>
+                            <f:facet name="header">Item</f:facet>
+                            <h:outputText value="#{item.nome}"/>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">Descrição</f:facet>
+                            <h:outputText value="#{item.descricao}"/>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">Valor</f:facet>
+                            <h:outputText value="#{item.valorEmReais}"/>
+                        </h:column>                        
+                        <h:column>
+                            <f:facet name="header">Grupo</f:facet>
+                            <h:outputText value="#{item.grupo.nome}"/>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">Situação</f:facet>
+                            <h:outputText value="#{item.situacao.descricao}"/>
+                        </h:column>                            
+                        <h:column class="col-lg-1">        
+                            <f:facet name="header">Editar</f:facet>
+                            <h:commandLink class="btn btn-link" action="#{itemCardMB.editar(item)}">
+                                <i class="glyphicon glyphicon-edit"/></h:commandLink>
+                        </h:column>
+                            <h:column class="col-lg-1">        
+                            <f:facet name="header">Detalhes</f:facet>
+                            <h:commandLink class="btn btn-link" action="#{itemCardMB.visualizar(item)}">
+                                <i class="glyphicon glyphicon-open"/></h:commandLink>
+                        </h:column>
+                    </h:dataTable>                    
+                    <ul class="pagination">
+                        <ui:repeat value="#{itemCardMB.qtdPaginas}" var="pagina">
+                            <li class="#{itemCardMB.retornarStatusPagina(pagina)}">
+                                <h:commandLink value="#{pagina+1}">
+                                    <f:ajax event="click" render="listaItens" 
+                                                        listener="#{itemCardMB.listarItens(pagina)}"/>
+                                </h:commandLink>
+                            </li>
+                        </ui:repeat>
+                    </ul>
+                    </h:form>
+                </div>
+            </ui:define> 
+        </ui:composition>
+        <f:metadata>            
+            <f:viewAction action="#{loginMB.verificaLogin('cardapio')}"/>            
+        </f:metadata>
+    </h:body>
+</html>
+

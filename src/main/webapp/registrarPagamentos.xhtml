@@ -1,0 +1,203 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>        
+    </h:head>
+    <h:body>         
+         <ui:composition template="/pagamentos.xhtml">
+            <ui:define name="cabecalhoPagamentos">
+                <h:outputScript library="js" name="jquery.inputmask.bundle.js"/> 
+                <script type="text/javascript">                    
+                    $(document).ready(function() {                    
+                        $("#li_registrar").addClass('active');
+                    });  
+                    
+                    function createMasks(){
+                       $("#formPagamento\\:valorDesconto").inputmask({mask: "9{1,9},9{2}",
+                           placeholder: "0",
+                           numericInput: "0"
+                       });
+                    }
+                </script>
+            </ui:define>            
+            <ui:define name="corpoPagamentos">
+                <div class="row">
+                    <h:form id="formPagamento" rendered="#{registrarPagamentoMB.formAtivo}">
+                    <div class="content" style="margin-top: 20px;border: 1px solid #ccc;">
+                        <div class="content" style="margin: 10px;">
+                            <div class="text-primary"><h5>Pedido</h5></div>
+                            <div class="row">
+                                <div class="col-lg-2">
+                                    <h:outputLabel value="Código: " class="control-label"/>
+                                    <h:outputText value="  #{registrarPagamentoMB.pedido.codigo}"/>
+                                </div>
+                                <div class="col-lg-4">
+                                    <h:outputLabel value="Data/Hora: " class="control-label"/>
+                                    <h:outputText value="  #{registrarPagamentoMB.pedido.dataHoraFormatada}"/>
+                                </div>
+                                <div class="col-lg-2">
+                                    <h:outputLabel value="Mesa: " styleClass="control-label"/>
+                                    <h:outputText value="    #{registrarPagamentoMB.pedido.mesa}"/>                                    
+                                </div>
+                                <div class="col-lg-3">
+                                    <h:outputLabel value="Cliente: " styleClass="control-label"/>
+                                    <h:outputText value="    #{registrarPagamentoMB.pedido.cliente.nome}"/>                                    
+                                </div>
+                            </div>                               
+                            <div class="content text-primary"><h5>Itens</h5></div>                                
+                            <div class="content" style="margin-bottom: 5px; border-bottom: 1px solid #ccc;">
+                                <h:dataTable value="#{registrarPagamentoMB.pedido.itens}" var="item" styleClass="table table-striped table-hover">
+                                    <h:column>
+                                        <f:facet name="header">Nome</f:facet>
+                                        <h:outputText value="#{item.item.nome}"/>
+                                    </h:column>
+                                    <h:column>
+                                        <f:facet name="header">Qtd.</f:facet>
+                                        <h:outputText value="#{item.quantidade}"/>
+                                    </h:column>
+                                    <h:column>
+                                        <f:facet name="header">Valor Unit.</f:facet>
+                                        <h:outputText value="#{item.valorEmReais}"/>
+                                    </h:column>
+                                    <h:column>
+                                        <f:facet name="header">Valor Itens Adic.</f:facet>
+                                        <h:outputText value="#{item.valorTotalItensAdicionaisEmReais}"/>
+                                    </h:column>
+                                    <h:column>
+                                        <f:facet name="header">Valor Total</f:facet>
+                                        <h:outputText value="#{item.valorTotalEmReais}"/>
+                                    </h:column>
+                                    <h:column>
+                                        <f:facet name="header">Itens Adicionais</f:facet>
+                                        <h:outputText value="#{item.resumoItensAdicionais}"/>
+                                    </h:column>
+                                </h:dataTable>
+                            </div>
+                            <div>
+                                <h:outputLabel value="Valor do Pedido: #{registrarPagamentoMB.pagamento.valorPedidoEmReais}" styleClass="control-label"/>
+                            </div>                            
+                            <div>
+                                <h:outputLabel value="Valor Desconto: #{registrarPagamentoMB.pagamento.valorDescontoEmReais}" styleClass="control-label"/>
+                            </div>
+                            <div>
+                                <h:outputLabel value="Valor a Pagar: #{registrarPagamentoMB.pagamento.valorPagoEmReais}" styleClass="control-label"/>
+                            </div>
+                            <div class="row content" style="margin-left: 5px;">
+                            <h:panelGroup id="painelDesconto" layout="block" rendered="#{registrarPagamentoMB.modoDescontoAtivo}" 
+                                          class="col-md-8" style="border: 1px solid #ccc; padding: 10px; padding-top: 0px;margin-top: 10px;">                                
+                                <div class="content text-primary"><h5>Desconto</h5></div>                                
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <h:outputLabel value="Valor" for="valorDesconto" styleClass="control-label"/>
+                                        <h:inputText id="valorDesconto" value="#{registrarPagamentoMB.valorDesconto}" 
+                                                     styleClass="form-control"
+                                                     converter="valorConverter" style="text-align: right;"/>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <h:outputLabel value="Percentual" for="Percentual" styleClass="control-label">
+                                            <script type="text/javascript">createMasks();</script>
+                                        </h:outputLabel>
+                                        <h:inputText id="percentual" value="#{registrarPagamentoMB.percentual}" styleClass="form-control"/>
+                                    </div>                                     
+                                    <div class="col-md-2">
+                                        <div class="row" style="height: 25px;"/>
+                                        <div class="row">
+                                            <h:commandLink value="Aplicar" action="#{registrarPagamentoMB.aplicarDesconto()}" 
+                                                             styleClass="btn btn-primary" style=""/>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2"> 
+                                        <div class="row" style="height: 25px;"/>
+                                        <div class="row">
+                                            <h:commandLink value="Cancelar" action="#{registrarPagamentoMB.cancelarAplicacaoDesconto()}" 
+                                                             styleClass="btn btn-default"/>
+                                        </div>
+                                    </div>
+                                </div>
+                            </h:panelGroup>
+                            </div>
+                            <div class="row content btn-toolbar" style="margin-left: 2px; margin-top: 10px; margin-right: 5px;">                            
+                                <h:commandLink value="Pagamento Realizado" action="#{registrarPagamentoMB.realizarPagamento()}" styleClass="btn btn-success"/>                                        
+                                <h:commandLink value="Descontos" action="#{registrarPagamentoMB.habilitarDesconto()}" 
+                                               styleClass="btn btn-primary" immediate="true"/>                                        
+                                <h:commandLink value="Fechar" immediate="true" styleClass="btn btn-default pull-right" action="#{registrarPagamentoMB.fecharPagamento()}"/>                           
+                            </div>                             
+                        </div>                                
+                    </div>
+                    </h:form>
+                    <h:messages infoClass="alert-success" errorClass="alert-danger" layout="table" style="margin-top: 20px; margin-left: 5px"/>
+                </div>
+                <div class="row">                    
+                    <div class="page-header text-primary"><h5>Buscar Pedidos</h5></div>
+                    <h:form styleClass="form-inline" style="margin-left: 20px;">
+                        <div class="row" style="margin-top: 20px;">
+                            <div class="form-group">
+                                <h:outputLabel value="Cód. Pedido " for="codPedido" styleClass="control-label" style="margin-left: 5px;"/>
+                                <h:inputText id="codPedido" value="#{registrarPagamentoMB.codPedido}" styleClass="form-control" style="margin-left: 3px;"/>
+                            </div>                                     
+                            <div class="form-group">
+                                <h:outputLabel value="Mesa " for="mesa" styleClass="control-label" style="margin-left: 5px;"/>
+                                <h:inputText id="mesa" value="#{registrarPagamentoMB.mesa}" styleClass="form-control" style="margin-left: 3px;"/>
+                            </div>
+                            <div class="form-group"> 
+                                <h:commandButton value="Buscar" action="#{registrarPagamentoMB.buscarPedidos(0)}" 
+                                                 styleClass="btn btn-default" style="margin-left: 5px;"/>
+                            </div>
+                        </div>
+                    </h:form>
+                    <div style="margin-top: 15px;">
+                        <h:outputText value="#{registrarPagamentoMB.msgRetornoBusca}" styleClass="alert-warning"/>
+                    </div>
+                    <div class="page-header text-primary"><h5>Lista de Pedidos</h5></div>
+                    <h:form id="formListaPagamentos">
+                        <h:dataTable value="#{registrarPagamentoMB.pedidos}" var="pedido" styleClass="table table-striped table-hover">
+                            <h:column>
+                                <f:facet name="header">Código</f:facet>
+                                <h:outputText value="#{pedido.codigo}"/>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">Data/Hora</f:facet>
+                                <h:outputText value="#{pedido.dataHoraFormatada}"/>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">Mesa</f:facet>
+                                <h:outputText value="#{pedido.mesa}"/>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">Valor</f:facet>
+                                <h:outputText value="#{pedido.valorEmReais}"/>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">Situação Pagamento</f:facet>
+                                <h:outputText value="Aberto"/>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">Detalhes</f:facet>
+                                <h:commandLink class="btn btn-link" action="#{registrarPagamentoMB.visualizarPedido(pedido)}">
+                                    <i class="glyphicon glyphicon-open"/>
+                                </h:commandLink>
+                            </h:column>                                        
+                        </h:dataTable>
+                        <ul class="pagination">
+                            <ui:repeat value="#{registrarPagamentoMB.qtdPaginas}" var="pagina">
+                                <li class="#{registrarPagamentoMB.retornarStatusPagina(pagina)}">
+                                    <h:commandLink value="#{pagina+1}">
+                                        <f:ajax event="click" render="formListaPagamentos" 
+                                                listener="#{registrarPagamentoMB.buscarPedidos(pagina)}"/>
+                                    </h:commandLink>
+                                </li>
+                            </ui:repeat>
+                        </ul>
+                    </h:form>
+                </div>
+            </ui:define>            
+        </ui:composition>
+        <f:metadata>            
+            <f:viewAction action="#{loginMB.verificaLogin('pagamentos')}"/>            
+        </f:metadata>
+    </h:body>
+</html>
+

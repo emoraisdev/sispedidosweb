@@ -1,0 +1,248 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+    </h:head>        
+    <h:body>        
+        <ui:composition template="/principal.xhtml">
+            <ui:define name="cabecalho">    
+                <title>Funcionários</title>
+                <h:outputScript library="js" name="jquery-3.1.1.js"/>
+                <h:outputScript library="js" name="maskedinput.js"/>
+                <h:outputScript library="js" name="jquery.inputmask.bundle.js"/> 
+                <script type="text/javascript">
+                    function createMasks(){
+                       $("#cpf").mask("999.999.999-99");
+                       $("#dataNascimento").mask("99/99/9999");
+                       $("#cep").mask("99999-999");
+                       $("#telefone").inputmask({mask:"(99) 9999-9999[9]", 
+                           greedy: false,
+                           skipOptionalPartCharacter: " "
+                       });
+                    }
+                    
+                    function redefinirMaskTelefone(){
+                        $("#telefone").inputmask("remove");
+                        if ($("#telefone").val().length > 14){
+                            $("#telefone").inputmask({mask:"(99) 99999-999[9]", 
+                                greedy: false,
+                                skipOptionalPartCharacter: " "
+                            });   
+                        } else {
+                            $("#telefone").inputmask({mask:"(99) 9999-9999[9]", 
+                                greedy: false,
+                                skipOptionalPartCharacter: " "
+                            });                            
+                        }                                                
+                    }
+                </script>
+            </ui:define>
+            <ui:define name="corpo">               
+                <div class="page-header text-primary"><h4>Funcionários</h4></div>
+                <h:form class="row btn-group">                    
+                    <h:commandLink class="btn btn-default" action="#{funcionarioMB.inserir()}">
+                            <i class="glyphicon glyphicon-plus"/> Inserir</h:commandLink>
+                    <h:commandLink class="btn btn-default" action="#{funcionarioMB.listarFuncionarios(0)}">
+                        <i class="glyphicon glyphicon-list"/> Listar</h:commandLink>
+                </h:form>                
+                <div class="row">                    
+                    <h:form id="form_func" rendered="#{funcionarioMB.formAtivo}" styleClass="form-horizontal" prependId="false">                                                
+                        <div class="page-header text-primary"><h5>Dados do Funcionário</h5></div>
+                        <div class="row">
+                            <div class="col-lg-3">
+                                <h:outputLabel value="Nome" for="nome" styleClass="control-label"/>
+                                <h:inputText id="nome" value="#{funcionarioMB.funcionario.nome}" styleClass="form-control" 
+                                             readonly="#{funcionarioMB.readOnly}" required="true"
+                                             requiredMessage="O campo Nome é obrigatório."/>
+                            </div>
+                            <div class="col-lg-6">
+                                <h:outputLabel value="Sobrenome" for="sobrenome" styleClass="control-label"/>
+                                <h:inputText id="sobrenome" value="#{funcionarioMB.funcionario.sobrenome}" styleClass="form-control"
+                                             readonly="#{funcionarioMB.readOnly}" required="true"/>
+                            </div>
+                            <div class="col-lg-3" >
+                                <h:outputLabel value="CPF" for="cpf" styleClass="control-label"/>
+                                <h:inputText id="cpf" value="#{funcionarioMB.funcionario.cpf}" converter="cpfConverter" styleClass="form-control"
+                                             readonly="#{funcionarioMB.readOnly}" required="true"/>
+                            </div>                           
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-3" >
+                                <h:outputLabel value="Data de Nascimento" for="dataNascimento" styleClass="control-label"/>
+                                <h:inputText id="dataNascimento" value="#{funcionarioMB.funcionario.dataNascimento}" styleClass="form-control"
+                                             readonly="#{funcionarioMB.readOnly}" required="true"
+                                             converter="dataConverter">
+                                </h:inputText>
+                            </div>
+                            <div class="col-lg-3">
+                                <h:outputLabel value="E-mail" for="email" styleClass="control-label"/>
+                                <h:inputText id="email" value="#{funcionarioMB.funcionario.email}" styleClass="form-control"
+                                             readonly="#{funcionarioMB.readOnly}" required="true"/>
+                            </div>
+                            <div class="col-lg-2">
+                                <h:outputLabel value="Telefone" for="telefone" styleClass="control-label"/>
+                                <h:inputText id="telefone" value="#{funcionarioMB.funcionario.telefone}" 
+                                             styleClass="form-control"
+                                             required="true"
+                                             readonly="#{funcionarioMB.readOnly}"
+                                             converter="telefoneConverter"
+                                             onblur="redefinirMaskTelefone();"/>
+                            </div>
+                            <div class="col-lg-2" >
+                                <h:outputLabel value="Cargo" for="cargo" styleClass="control-label"/>
+                                <h:selectOneMenu id="cargo" value="#{funcionarioMB.funcionario.cargo}" styleClass="form-control"
+                                                 disabled="#{funcionarioMB.readOnly}">
+                                    <f:selectItems value="#{funcionarioMB.cargos}"/>
+                                </h:selectOneMenu>                                
+                            </div>
+                            <div class="col-lg-2" >
+                                <h:outputLabel value="Situação" for="situacao" styleClass="control-label"/>
+                                <h:selectOneMenu id="situacao" value="#{funcionarioMB.funcionario.situacao}" 
+                                                 styleClass="form-control" 
+                                                 readonly="#{funcionarioMB.readOnly}">
+                                    <f:selectItems value="#{funcionarioMB.situacaoUsuario}"/>
+                                </h:selectOneMenu>                                
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-3" >
+                                <h:outputLabel value="Administrador" for="administrador" styleClass="control-label"/>
+                                <h:selectOneMenu id="administrador" value="#{funcionarioMB.funcionario.administrador}" styleClass="form-control"
+                                                 disabled="#{funcionarioMB.readOnly}">
+                                    <f:selectItem itemValue="false" itemLabel="Não"/>
+                                    <f:selectItem itemValue="true" itemLabel="Sim"/>
+                                </h:selectOneMenu>
+                            </div>
+                            <div class="col-lg-3" >
+                                <h:outputLabel value="Login" for="login" styleClass="control-label"/>
+                                <h:inputText id="login" value="#{funcionarioMB.funcionario.login}" styleClass="form-control"
+                                             readonly="#{funcionarioMB.readOnly}" required="true"/>
+                            </div>
+                            <div class="col-lg-3">
+                                <h:outputLabel value="Senha" for="senha" styleClass="control-label" rendered="#{!funcionarioMB.readOnly}"/>
+                                <h:inputSecret id="senha" value="#{funcionarioMB.funcionario.senha}" styleClass="form-control"
+                                               rendered="#{!funcionarioMB.readOnly}" 
+                                               required="#{!funcionarioMB.modoAlteracao}"/>
+                            </div>
+                            <div class="col-lg-3">
+                                <h:outputLabel value="Confirmar Senha" for="confirmarSenha" styleClass="control-label" 
+                                               rendered="#{!funcionarioMB.readOnly}"/>
+                                <h:inputSecret id="confirmarSenha" value="#{funcionarioMB.confirmarSenha}" styleClass="form-control"
+                                               rendered="#{!funcionarioMB.readOnly}" 
+                                               required="#{!funcionarioMB.modoAlteracao}"/>
+                            </div>                            
+                        </div>
+                        <div class="page-header text-primary"><h5>Endereço</h5></div>                        
+                        <div class="row">
+                            <div class="col-lg-3" >
+                                <h:outputLabel value="Estado" for="estado" styleClass="control-label"/>
+                                <h:inputText id="estado" value="#{funcionarioMB.funcionario.endereco.estado}" styleClass="form-control"
+                                             readonly="#{funcionarioMB.readOnly}" required="true"/>
+                            </div>
+                            <div class="col-lg-6">
+                                <h:outputLabel value="Cidade" for="cidade" styleClass="control-label"/>
+                                <h:inputText id="cidade" value="#{funcionarioMB.funcionario.endereco.cidade}" styleClass="form-control"
+                                             readonly="#{funcionarioMB.readOnly}" required="true"/>
+                            </div>
+                            <div class="col-lg-3">
+                                <h:outputLabel value="Bairro" for="bairro" styleClass="control-label"/>
+                                <h:inputText id="bairro" value="#{funcionarioMB.funcionario.endereco.bairro}" styleClass="form-control"
+                                             readonly="#{funcionarioMB.readOnly}" required="true"/>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-4" >
+                                <h:outputLabel value="Rua" for="rua" styleClass="control-label"/>
+                                <h:inputText id="rua" value="#{funcionarioMB.funcionario.endereco.rua}" styleClass="form-control"
+                                             readonly="#{funcionarioMB.readOnly}" required="true"/>
+                            </div>
+                            <div class="col-lg-3" >
+                                <h:outputLabel value="Número" for="numero" styleClass="control-label"/>
+                                <h:inputText id="numero" value="#{funcionarioMB.funcionario.endereco.numero}" styleClass="form-control"
+                                             readonly="#{funcionarioMB.readOnly}" required="true"/>
+                            </div>
+                            <div class="col-lg-2" >
+                                <h:outputLabel value="CEP" for="cep" styleClass="control-label"/>
+                                <h:inputText id="cep" value="#{funcionarioMB.funcionario.endereco.cep}" converter="cepConverter" styleClass="form-control"
+                                             readonly="#{funcionarioMB.readOnly}" required="true"/>
+                            </div>
+                            <div class="col-lg-3" >
+                                <h:outputLabel value="Complemento" for="complemento" styleClass="control-label">
+                                    <script type="text/javascript">createMasks();</script>
+                                </h:outputLabel>
+                                <h:inputText id="complemento" value="#{funcionarioMB.funcionario.endereco.complemento}" styleClass="form-control"
+                                             readonly="#{funcionarioMB.readOnly}"/>
+                            </div>
+                        </div>
+                        <br></br>
+                        <div class="row" style="margin-left: 3px">
+                            <h:commandLink value="Salvar" styleClass="btn btn-primary"
+                                           action="#{funcionarioMB.salvar()}"
+                                           rendered="#{!funcionarioMB.readOnly}"/>
+                            <h:commandLink value="Fechar" styleClass="btn btn-default"
+                                           action="#{funcionarioMB.fecharForm()}"                                           
+                                           immediate="true"
+                                           style="margin-left: 10px;"/>
+                        </div>                        
+                    </h:form>
+                    <h:messages infoClass="alert-success" errorClass="alert-danger" 
+                                layout="table" style="margin-top: 15px; margin-left: 15px"/>
+                </div>                
+                <div class="row">
+                    <h:form id="lista_func" rendered="#{!funcionarioMB.formAtivo}">
+                        <div class="page-header text-primary"><h5>Lista de Funcionários</h5></div>
+                        <h:dataTable value="#{funcionarioMB.listaFuncionario}" var="func" styleClass="table table-striped table-hover">
+                        <h:column>
+                            <f:facet name="header">Login</f:facet>
+                            <h:outputText value="#{func.login}"/>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">Nome</f:facet>
+                            <h:outputText value="#{func.nome}"/>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">Sobrenome</f:facet>
+                            <h:outputText value="#{func.sobrenome}"/>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">Cargo</f:facet>
+                            <h:outputText value="#{func.cargo.descricao}"/>
+                        </h:column>
+                        <h:column>
+                            <f:facet name="header">Situação</f:facet>
+                            <h:outputText value="#{func.situacao.descricao}"/>
+                        </h:column>
+                        <h:column class="col-lg-1">        
+                            <f:facet name="header">Editar</f:facet>
+                            <h:commandLink class="btn btn-link" action="#{funcionarioMB.alterar(func.codigo)}">
+                                <i class="glyphicon glyphicon-edit"/></h:commandLink>
+                        </h:column>
+                        <h:column class="col-lg-1">                            
+                            <f:facet name="header">Detalhes</f:facet>
+                            <h:commandLink class="btn btn-link" action="#{funcionarioMB.visualizar(func.codigo)}">
+                                <i class="glyphicon glyphicon-open"/></h:commandLink>
+                        </h:column>
+                    </h:dataTable>
+                    <ul class="pagination">
+                        <ui:repeat value="#{funcionarioMB.qtdPaginas}" var="pagina">
+                            <li class="#{funcionarioMB.retornarStatusPagina(pagina)}">
+                                <h:commandLink value="#{pagina+1}">
+                                    <f:ajax event="click" render="lista_func" onevent="showListaFuncionario"
+                                        listener="#{funcionarioMB.listarFuncionarios(pagina)}"/>
+                                </h:commandLink>
+                            </li>
+                        </ui:repeat>
+                    </ul>    
+                    </h:form>
+                </div>
+            </ui:define>
+        </ui:composition>
+        <f:metadata>            
+            <f:viewAction action="#{loginMB.verificaLogin('funcionarios')}"/>            
+        </f:metadata>
+    </h:body>
+</html>
+

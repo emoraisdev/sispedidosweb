@@ -1,0 +1,79 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+    </h:head>
+    <h:body>
+        <ui:composition template="/cardapio.xhtml">
+        <ui:define name="cabecalhoCardapio">    
+            <h:outputScript library="js" name="jquery-3.1.1.js"/>                
+            <script type="text/javascript">                    
+                $(document).ready(function() {                    
+                    $("#li_visualizar").addClass('active');
+                });                                     
+            </script>
+        </ui:define>
+        <ui:define name="corpoCardapio">                
+            <div class="page-header text-primary"><h5><h:outputText value="Cardápio"/></h5></div>
+            <div class="row" style="background-color: #c9e2b3; border-radius: 4px; margin-right: 200px">
+                <ui:repeat value="#{visualizarCardMB.grupos}" var="grupoN1">  
+                    <h:outputLabel value="#{grupoN1.nome}" class="text-primary text-uppercase"/>                    
+                    <ui:repeat value="#{grupoN1.itens}" var="item">                            
+                        <div class="content" style="margin-left: 20px; background-color: #ebebeb; margin-top: 2px; 
+                             margin-right: 20px; margin-bottom: 2px">
+                            <div class="content" style=" background-color: lightgray; border-radius: 2px">
+                                <h:outputLabel value="#{item.nome}"/>
+                                <h:outputLabel value="#{item.valorEmReais}" styleClass="pull-right"/>
+                            </div>
+                            <div class="content">
+                                <h:outputLabel value="#{item.descricao}"/>                               
+                            </div>
+                        </div>
+                    </ui:repeat>                                        
+                    <ui:repeat value="#{grupoN1.gruposFilhos}" var="grupoN2">
+                        <div class="content" style="margin-left: 15px">
+                            <h:outputLabel value="#{grupoN2.nome}" class="text-primary"/>                    
+                            <ui:repeat value="#{grupoN2.itens}" var="item">                            
+                                <div class="content" style="margin-left: 20px; background-color: #ebebeb; margin-top: 2px; 
+                                     margin-right: 20px; margin-bottom: 2px">
+                                    <div class="content" style=" background-color: lightgray; border-radius: 2px">
+                                        <h:outputLabel value="#{item.nome}"/>
+                                        <h:outputLabel value="#{item.valorEmReais}" styleClass="pull-right"/>
+                                    </div>
+                                    <div class="content">
+                                        <h:outputLabel value="#{item.descricao}"/>                               
+                                    </div>
+                                </div>
+                            </ui:repeat>                                            
+                            <ui:repeat value="#{grupoN2.gruposFilhos}" var="grupoN3">
+                                <div class="content" style="margin-left: 15px">
+                                    <h:outputLabel value="#{grupoN3.nome}" class="text-primary"/>                    
+                                    <ui:repeat value="#{grupoN3.itens}" var="item">                            
+                                        <div class="content" style="margin-left: 20px; background-color: #ebebeb; margin-top: 2px; 
+                                             margin-right: 20px; margin-bottom: 2px">
+                                            <div class="content" style=" background-color: lightgray; border-radius: 2px">
+                                                <h:outputLabel value="#{item.nome}"/>
+                                                <h:outputLabel value="#{item.valorEmReais}" styleClass="pull-right"/>
+                                            </div>
+                                            <div class="content">
+                                                <h:outputLabel value="#{item.descricao}"/>                               
+                                            </div>
+                                        </div>
+                                    </ui:repeat>                    
+                                </div>
+                            </ui:repeat> 
+                        </div>
+                    </ui:repeat>
+                </ui:repeat>
+            </div>
+        </ui:define> 
+        </ui:composition>
+        <f:metadata>            
+            <f:viewAction action="#{loginMB.verificaLogin('cardapio')}"/>            
+        </f:metadata>
+    </h:body>
+</html>
+

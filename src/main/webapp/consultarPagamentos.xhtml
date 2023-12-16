@@ -1,0 +1,171 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+    </h:head>
+    <h:body>
+        <ui:composition template="/pagamentos.xhtml">
+            <ui:define name="cabecalhoPagamentos">
+                <h:outputScript library="js" name="maskedinput.js"/>
+                <script type="text/javascript">                    
+                    $(document).ready(function() {                    
+                        $("#li_consultar").addClass('active');
+                        $("#periodoDe").mask("99/99/9999");                       
+                        $("#periodoAte").mask("99/99/9999");
+                    });                    
+                </script>
+            </ui:define>            
+            <ui:define name="corpoPagamentos">
+                <div class="row">
+                    <h:form id="formPagamento" rendered="#{consultarPagamentoMB.formAtivo}">
+                    <div class="content" style="margin-top: 20px;border: 1px solid #ccc;">
+                        <div class="content" style="margin: 10px;">
+                            <div class="text-primary"><h5>Pedido</h5></div>
+                            <div class="row">
+                                <div class="col-lg-3">
+                                    <h:outputLabel value="Código: " class="control-label"/>
+                                    <h:outputText value="  #{consultarPagamentoMB.pedido.codigo}"/>
+                                </div>
+                                <div class="col-lg-4">
+                                    <h:outputLabel value="Data/Hora: " class="control-label"/>
+                                    <h:outputText value="  #{consultarPagamentoMB.pedido.dataHoraFormatada}"/>
+                                </div>
+                                <div class="col-lg-2">
+                                    <h:outputLabel value="Mesa: " styleClass="control-label"/>
+                                    <h:outputText value="    #{consultarPagamentoMB.pedido.mesa}"/>                                    
+                                </div>
+                            </div>    
+                            <div class="row">
+                                <div class="col-lg-3">
+                                    <h:outputLabel value="Cliente: " styleClass="control-label"/>
+                                    <h:outputText value="    #{consultarPagamentoMB.pedido.cliente.nome}"/>                                    
+                                </div>
+                                <div class="col-lg-3">
+                                    <h:outputLabel value="Funcionário: " styleClass="control-label"/>
+                                    <h:outputText value="    #{consultarPagamentoMB.pedido.pagamento.funcionario.login}"/>                                    
+                                </div>
+                            </div>  
+                            <div class="content text-primary"><h5>Itens</h5></div>                                
+                            <div class="content" style="margin-bottom: 5px; border-bottom: 1px solid #ccc;">
+                                <h:dataTable value="#{consultarPagamentoMB.pedido.itens}" var="item" styleClass="table table-striped table-hover">
+                                    <h:column>
+                                        <f:facet name="header">Nome</f:facet>
+                                        <h:outputText value="#{item.item.nome}"/>
+                                    </h:column>
+                                    <h:column>
+                                        <f:facet name="header">Qtd.</f:facet>
+                                        <h:outputText value="#{item.quantidade}"/>
+                                    </h:column>
+                                    <h:column>
+                                        <f:facet name="header">Valor Unit.</f:facet>
+                                        <h:outputText value="#{item.valorEmReais}"/>
+                                    </h:column>
+                                    <h:column>
+                                        <f:facet name="header">Valor Itens Adic.</f:facet>
+                                        <h:outputText value="#{item.valorTotalItensAdicionaisEmReais}"/>
+                                    </h:column>
+                                    <h:column>
+                                        <f:facet name="header">Valor Total</f:facet>
+                                        <h:outputText value="#{item.valorTotalEmReais}"/>
+                                    </h:column>
+                                    <h:column>
+                                        <f:facet name="header">Itens Adicionais</f:facet>
+                                        <h:outputText value="#{item.resumoItensAdicionais}"/>
+                                    </h:column>
+                                </h:dataTable>
+                            </div>
+                            <div>
+                                <h:outputLabel value="Valor do Pedido: #{consultarPagamentoMB.pedido.pagamento.valorPedidoEmReais}" styleClass="control-label"/>
+                            </div>                            
+                            <div>
+                                <h:outputLabel value="Valor Desconto: #{consultarPagamentoMB.pedido.pagamento.valorDescontoEmReais}" styleClass="control-label"/>
+                            </div>
+                            <div>
+                                <h:outputLabel value="Valor Pago: #{consultarPagamentoMB.pedido.pagamento.valorPagoEmReais}" styleClass="control-label"/>
+                            </div>
+                            <div class="row content btn-toolbar" style="margin-left: 2px; margin-top: 10px;">                            
+                                <h:commandLink value="Fechar" immediate="true" styleClass="btn btn-default" action="#{consultarPagamentoMB.fecharPagamento()}"/>                           
+                            </div>                             
+                        </div>                                
+                    </div>
+                    </h:form>
+                    <h:messages infoClass="alert-success" errorClass="alert-danger" layout="table" style="margin-top: 20px; margin-left: 5px"/>
+                </div>
+                <div class="row">                    
+                    <div class="page-header text-primary"><h5>Buscar Pagamentos</h5></div>
+                    <h:form styleClass="form-inline" prependId="false" style="margin-left: 20px;">
+                        <div class="row" style="margin-top: 20px;">
+                            <div class="form-group">
+                                <h:outputLabel value="Período: de" for="periodoDe" styleClass="control-label" style="margin-left: 5px;"/>
+                                <h:inputText id="periodoDe" value="#{consultarPagamentoMB.periodoDe}" styleClass="form-control" 
+                                             required="true" requiredMessage="O campo Período: De é obrigatório." style="margin-left: 3px;"
+                                             converter="dataConverter"/>
+                            </div>
+                            <div class=" form-group" style="margin-left: 3px;">
+                                <h:outputLabel value="até" for="periodoAte" styleClass="control-label" style="margin-left: 5px;"/>
+                                <h:inputText id="periodoAte" value="#{consultarPagamentoMB.periodoAte}" styleClass="form-control " 
+                                             required="true" requiredMessage="O campo Período: Até é obrigatório." style="margin-left: 3px;"
+                                             converter="dataConverter"/>
+                            </div>                                 
+                            <div class="form-group"> 
+                                <h:commandButton value="Buscar" action="#{consultarPagamentoMB.buscarPagamentos(0)}" 
+                                                 styleClass="btn btn-default" style="margin-left: 5px;"/>
+                            </div>
+                        </div>
+                    </h:form>
+                    <div style="margin-top: 15px;">
+                        <h:outputText value="#{consultarPagamentoMB.msgRetornoBusca}" styleClass="alert-warning"/>
+                    </div>
+                    <div class="page-header text-primary"><h5>Lista de Pedidos</h5></div>
+                    <h:form id="formListaPagamentos">
+                        <h:dataTable value="#{consultarPagamentoMB.pedidos}" var="pedido" styleClass="table table-striped table-hover">
+                            <h:column>
+                                <f:facet name="header">Código</f:facet>
+                                <h:outputText value="#{pedido.codigo}"/>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">Data/Hora</f:facet>
+                                <h:outputText value="#{pedido.dataHoraFormatada}"/>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">Mesa</f:facet>
+                                <h:outputText value="#{pedido.mesa}"/>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">Valor Pago</f:facet>
+                                <h:outputText value="#{pedido.pagamento.valorPagoEmReais}"/>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">Situação Pagamento</f:facet>
+                                <h:outputText value="#{pedido.pagamento.situacao.descricao}"/>
+                            </h:column>
+                            <h:column>
+                                <f:facet name="header">Detalhes</f:facet>
+                                <h:commandLink class="btn btn-link" action="#{consultarPagamentoMB.visualizarPagamento(pedido)}">
+                                    <i class="glyphicon glyphicon-open"/>
+                                </h:commandLink>
+                            </h:column>                                        
+                        </h:dataTable>
+                        <ul class="pagination">
+                            <ui:repeat value="#{consultarPagamentoMB.qtdPaginas}" var="pagina">
+                                <li class="#{consultarPagamentoMB.retornarStatusPagina(pagina)}">
+                                    <h:commandLink value="#{pagina+1}">
+                                        <f:ajax event="click" render="formListaPagamentos" 
+                                                listener="#{consultarPagamentoMB.buscarPagamentos(pagina)}"/>
+                                    </h:commandLink>
+                                </li>
+                            </ui:repeat>
+                        </ul>
+                    </h:form>
+                </div>
+            </ui:define>            
+        </ui:composition>
+        <f:metadata>            
+            <f:viewAction action="#{loginMB.verificaLogin('pagamentos')}"/>            
+        </f:metadata>
+    </h:body>
+</html>
+

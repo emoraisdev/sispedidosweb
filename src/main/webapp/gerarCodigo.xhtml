@@ -1,0 +1,37 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+    </h:head>
+    <h:body>
+        <ui:composition template="/principal.xhtml">            
+            <ui:define name="corpo">
+                <div class="page-header text-primary"><h4>Principal</h4></div>                
+                <div class="col-lg-12">
+                    <div class="row">
+                        <p>Gerar código para registro de entrada de clientes.</p>
+                        <h:form>
+                            <div class="col-sm-1">
+                                <h:commandLink value="Gerar" styleClass="btn btn-success"
+                                           action="#{gerarCodigoMB.gerarCodigo()}"/>
+                            </div>
+                            <div class="col-sm-3" style="margin-top: 5px;">
+                                <h:outputLabel id="codigo" value=" Codigo: #{gerarCodigoMB.codigo}" styleClass="control-label"/>
+                            </div>
+                        </h:form>
+                    </div>
+                    <div class="row">
+                        <h:messages infoClass="alert-success" errorClass="alert-danger" layout="table" style="margin-top: 15px; margin-left: 15px"/>
+                    </div>
+                </div>
+            </ui:define> 
+        </ui:composition>
+        <f:metadata>            
+            <f:viewAction action="#{loginMB.verificaLogin('principal')}"/>            
+        </f:metadata>
+    </h:body>
+</html>
+
